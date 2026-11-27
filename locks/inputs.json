@@ -2,14 +2,20 @@
   "chromium": {
     "version": "156.0.8078.93",
     "commit": "337f55dc817e82871bf6f8275394f2e9222b81b0",
+    "position": "refs/branch-heads/8078@{#2090}",
+    "timestamp": "1793847723",
+    "year": "2026",
+    "dawn_revision": "8ce9806ee580b750c420d7ccd2d192d127c563bb",
     "url": "https://chromium.googlesource.com/chromium/src/+archive/337f55dc817e82871bf6f8275394f2e9222b81b0.tar.gz",
     "sha256": "c7d68829c61747c8f93bcdd23a3673416c4f2b7ea435843596282e64f627da56",
-    "deps_sha256": "48dad749ea67ff0dcab263a16d415c5262191749b08ae2062021a8dcfb84f748"
+    "deps_sha256": "48dad749ea67ff0dcab263a16d415c5262191749b08ae2062021a8dcfb84f748",
+    "tree_sha256": "228d218cbb5989f9d7be16e7e3d8c435fa185667894768105f1165225ca3038c"
   },
   "gn": {
     "commit": "510ec7992c30f172205792f190e96111a896ba8f",
     "url": "https://gn.googlesource.com/gn/+archive/510ec7992c30f172205792f190e96111a896ba8f.tar.gz",
-    "sha256": "612a7bc70b85306d9ccd36f3d9d353151712d3998cf99f726a756bed3c9921fd"
+    "sha256": "612a7bc70b85306d9ccd36f3d9d353151712d3998cf99f726a756bed3c9921fd",
+    "tree_sha256": "2aa726287c614a8de40d9bd95d8d548e6feb959eb51fc5686f554e0d02bef826"
   },
   "llvm": {
     "commit": "62397f8b3c3986f54187ce08f00b3448ea1f8880",

@@ -3,10 +3,13 @@ from hashlib import sha256
 import json
 import os
 from pathlib import Path
+from platform import python_version
 import re
 import subprocess
+import sys
 from typing import TypedDict
 
+from intake import bootstrap, extract_tar, setup
 from plan import ROOT, SMOKE, Stage
 from release_cache import Asset, Receipt, ReleaseCache, checksum
 
@@ -15,17 +18,13 @@ OUT = ROOT / "out"
 INPUTS = OUT / "inputs"
 BUILD = OUT / "build"
 STATE = OUT / "hosted"
+ARCHIVES = OUT / "archives"
 APK_FILES = [
     "apks/SystemWebView64.apk",
     "apks/NOTICE",
     "apks/SystemWebView64.spdx.json",
     "apks/build-inputs.json",
 ]
-
-
-class AssetSpec(TypedDict):
-    url: str
-    sha256: str
 
 
 class Job(TypedDict):
@@ -50,12 +49,38 @@ def identity(receipt: Receipt) -> tuple[int, str]:
     return receipt["id"], receipt["digest"]
 
 
-def plan_name() -> str:
+def host_image() -> list[str]:
+    return [
+        os.environ[name]
+        for name in ("RUNNER_OS", "RUNNER_ARCH", "ImageOS", "ImageVersion")
+    ]
+
+
+def toolchain_name() -> str:
+    inputs = json.loads((ROOT / "locks/inputs.json").read_text(encoding="utf-8"))
+    fingerprint = stable_hash(
+        {
+            "host": host_image(),
+            "inputs": {name: inputs[name] for name in ("llvm", "gn", "ndk")},
+            "bootstrap": checksum(ROOT / "scripts/bootstrap.sh"),
+            "intake": checksum(ROOT / "scripts/intake.py"),
+        }
+    )
+    return f"toolchain-{fingerprint}.tar.zst"
+
+
+def plan_name(toolchain: Receipt) -> str:
     inputs = [
         "locks/inputs.json",
-        "config/webview.gn",
+        "locks/dependencies.json",
+        *(
+            path.relative_to(ROOT).as_posix()
+            for path in sorted((ROOT / "config").rglob("*"))
+            if path.is_file()
+        ),
         "ci/compile-weights.json",
         "scripts/build.sh",
+        "scripts/intake.py",
         "scripts/plan.py",
         "patches/series",
         *(
@@ -68,16 +93,9 @@ def plan_name() -> str:
     fingerprint = stable_hash(
         {
             "format": 1,
-            "inputs": os.environ["INPUTS_SHA256"],
-            "host": [
-                os.environ["RUNNER_OS"],
-                os.environ["RUNNER_ARCH"],
-                os.environ["ImageOS"],
-                os.environ["ImageVersion"],
-            ],
-            "python": subprocess.check_output(
-                ["python", "--version"], text=True
-            ).strip(),
+            "toolchain": identity(toolchain),
+            "host": host_image(),
+            "python": python_version(),
             "recipe": {path: checksum(ROOT / path) for path in inputs},
         }
     )
@@ -115,135 +133,76 @@ def emit_matrices() -> None:
 
 def lookup(cache: ReleaseCache, stage: str) -> None:
     upstream: dict[str, Receipt] = {}
-    if stage == "plan":
-        name = plan_name()
+    if stage == "toolchain":
+        name = toolchain_name()
         release = cache.ensure()
         hit = cache.lookup(release, name)
-        if hit is not None:
-            cache.fetch(hit, STATE / "plan.json")
         job_output("release", str(release))
-        job_output("plan", name)
+        job_output("toolchain", name)
     else:
         release = int(os.environ["CACHE_RELEASE"])
-        name = plan_name()
-        if name != os.environ["CACHE_PLAN"]:
-            raise ValueError("Runner or checkout inputs differ from the plan job")
         assets: dict[str, Asset] = cache.assets(release)
-        plan = cache.lookup(release, name, assets=assets)
-        if plan is None:
-            raise ValueError("The plan was removed during the build")
-
-        matrices: Matrices = json.loads(os.environ["BUILD_MATRICES"])
-        parents: dict[str, list[str]] = {
-            "smoke": [],
-            "prepare-base": [],
-            **{name: ["prepare-base"] for name in matrices["prepare"]},
-            "prepare-finish": matrices["prepare"],
-            **{name: ["prepare-finish"] for name in matrices["native"]},
-            "java": ["prepare-finish"],
-            "link": matrices["native"],
-            "apk": ["link", "java"],
-        }
-
-        def dependencies(job: str) -> dict[str, Receipt]:
-            direct: dict[str, Receipt] = {}
-            for parent in parents[job]:
-                if parent not in upstream:
-                    parent_name = stage_name(parent, plan, dependencies(parent))
-                    receipt = cache.lookup(release, parent_name, assets=assets)
-                    if receipt is None:
-                        raise ValueError(f"Missing upstream handoff for {parent}")
-                    upstream[parent] = receipt
-                direct[parent] = upstream[parent]
-            return direct
-
-        name = stage_name(stage, plan, dependencies(stage))
-        hit = cache.lookup(release, name, assets=assets)
+        toolchain = cache.lookup(release, os.environ["CACHE_TOOLCHAIN"], assets=assets)
+        if toolchain is None:
+            raise ValueError("Missing build toolchain in the branch's draft Release")
+        name = plan_name(toolchain)
+        if stage == "plan":
+            hit = cache.lookup(release, name, assets=assets)
+            if hit is not None:
+                cache.fetch(hit, STATE / "plan.json")
+            job_output("plan", name)
+        else:
+            if name != os.environ["CACHE_PLAN"]:
+                raise ValueError("Runner or checkout inputs differ from the plan job")
+            plan = cache.lookup(release, name, assets=assets)
+            if plan is None:
+                raise ValueError("The plan was removed during the build")
+            name = lookup_stage(cache, release, assets, stage, plan, upstream)
+            hit = cache.lookup(release, name, assets=assets)
+            if hit is None:
+                cache.fetch(plan, STATE / "plan.json")
         if hit is None:
-            cache.fetch(plan, STATE / "plan.json")
+            cache.fetch(toolchain, STATE / "toolchain.tar.zst")
+
     job = Job(name=name, release=release, hit=hit, upstream=upstream)
     (STATE / "job.json").write_text(json.dumps(job), encoding="utf-8")
     job_output("hit", "true" if hit else "false")
     print(f"{'Reuse' if hit else 'Build'} {name} in draft {release}")
 
 
-def download(spec: AssetSpec, destination: Path) -> None:
-    if not spec["url"].startswith("https://") or not re.fullmatch(
-        r"[0-9a-f]{64}", spec["sha256"]
-    ):
-        raise ValueError("Inputs require an HTTPS URL and a SHA-256 digest")
-    subprocess.run(
-        [
-            "curl",
-            "--fail",
-            "--silent",
-            "--show-error",
-            "--location",
-            "--retry",
-            "3",
-            "--proto",
-            "=https",
-            "--proto-redir",
-            "=https",
-            "--output",
-            destination,
-            "--",
-            spec["url"],
-        ],
-        check=True,
-    )
-    if checksum(destination) != f"sha256:{spec['sha256']}":
-        raise ValueError(f"Digest mismatch for {spec['url']}")
+def lookup_stage(
+    cache: ReleaseCache,
+    release: int,
+    assets: dict[str, Asset],
+    stage: str,
+    plan: Receipt,
+    upstream: dict[str, Receipt],
+) -> str:
+    matrices: Matrices = json.loads(os.environ["BUILD_MATRICES"])
+    parents: dict[str, list[str]] = {
+        "smoke": [],
+        "prepare-base": [],
+        **{name: ["prepare-base"] for name in matrices["prepare"]},
+        "prepare-finish": matrices["prepare"],
+        **{name: ["prepare-finish"] for name in matrices["native"]},
+        "java": ["prepare-finish"],
+        "link": matrices["native"],
+        "apk": ["link", "java"],
+    }
 
+    def dependencies(job: str) -> dict[str, Receipt]:
+        direct: dict[str, Receipt] = {}
+        for parent in parents[job]:
+            if parent not in upstream:
+                name = stage_name(parent, plan, dependencies(parent))
+                receipt = cache.lookup(release, name, assets=assets)
+                if receipt is None:
+                    raise ValueError(f"Missing upstream handoff for {parent}")
+                upstream[parent] = receipt
+            direct[parent] = upstream[parent]
+        return direct
 
-def extract(archive: Path, root: Path) -> None:
-    root.mkdir(parents=True, exist_ok=True)
-    subprocess.run(
-        ["tar", "--extract", "--no-same-owner", "--file", archive, "--directory", root],
-        check=True,
-    )
-
-
-def setup(verify_only: bool) -> None:
-    manifest = STATE / "inputs.json"
-    download(
-        AssetSpec(url=os.environ["INPUTS_URL"], sha256=os.environ["INPUTS_SHA256"]),
-        manifest,
-    )
-    sources: dict[str, list[AssetSpec]] = json.loads(
-        manifest.read_text(encoding="utf-8")
-    )
-    for component in (
-        ["sdk", "jdk"] if verify_only else ["sdk", "jdk", "clang", "gn", "chromium"]
-    ):
-        entries = sources[component]
-        if not entries:
-            raise ValueError(f"No prepared archive for {component}")
-        for entry in entries:
-            temporary = STATE / "input.tar"
-            download(entry, temporary)
-            extract(temporary, INPUTS / component)
-            temporary.unlink()
-    if not verify_only:
-        upstream = INPUTS / "chromium"
-        java = upstream / "third_party/jdk/current"
-        java.parent.mkdir(parents=True, exist_ok=True)
-        java.symlink_to(INPUTS / "jdk", target_is_directory=True)
-        for name in (ROOT / "patches/series").read_text(encoding="utf-8").splitlines():
-            subprocess.run(
-                [
-                    "patch",
-                    "--directory",
-                    upstream,
-                    "--batch",
-                    "--forward",
-                    "--fuzz=0",
-                    "-p1",
-                    "--input",
-                    ROOT / "patches" / name,
-                ],
-                check=True,
-            )
+    return stage_name(stage, plan, dependencies(stage))
 
 
 def load_job() -> Job:
@@ -266,13 +225,13 @@ def restore(cache: ReleaseCache, stage: str) -> None:
         if stage != "apk":
             raise ValueError("Only APK verification restores a cached job's own output")
         cache.fetch(hit, archive)
-        extract(archive, BUILD)
+        extract_tar(archive, BUILD)
         archive.unlink()
         return
     stages = load_plan()
     for name, receipt in job["upstream"].items():
         cache.fetch(receipt, archive)
-        extract(archive, BUILD)
+        extract_tar(archive, BUILD)
         archive.unlink()
         restored.extend(stages[name]["outputs"])
     (STATE / "restored.txt").write_text("\n".join(restored), encoding="utf-8")
@@ -286,17 +245,34 @@ def build_environment() -> dict[str, str]:
         "CLANG_ROOT": str(INPUTS / "clang"),
         "GN": str(INPUTS / "gn/gn"),
         "JAVA_HOME": str(INPUTS / "jdk"),
-        "PYTHON": "python",
+        "PYTHON": sys.executable,
         "JOBS": "4",
     }
 
 
 def build(stage: str) -> None:
     env = build_environment()
+    if stage == "toolchain":
+        bootstrap(INPUTS, OUT / "bootstrap", ARCHIVES)
+        subprocess.run(
+            [
+                "tar",
+                "--zstd",
+                "--create",
+                "--file",
+                STATE / "result.tar.zst",
+                "--directory",
+                INPUTS,
+                "gn",
+                "clang",
+            ],
+            check=True,
+        )
+        return
     if stage == "plan":
         subprocess.run(
             [
-                "python",
+                sys.executable,
                 ROOT / "scripts/plan.py",
                 "generate",
                 "--build",
@@ -310,7 +286,7 @@ def build(stage: str) -> None:
         return
     subprocess.run(
         [
-            "python",
+            sys.executable,
             ROOT / "scripts/plan.py",
             "run",
             "--build",
@@ -389,7 +365,12 @@ def main() -> None:
                 )
                 cache.store(job["release"], job["name"], path)
         case "setup" | "verify-setup":
-            setup(args.action == "verify-setup")
+            verify_only = args.action == "verify-setup"
+            if not verify_only:
+                toolchain = STATE / "toolchain.tar.zst"
+                extract_tar(toolchain, INPUTS)
+                toolchain.unlink()
+            setup(INPUTS, ARCHIVES, verify_only)
         case "configure":
             subprocess.run(
                 ["bash", ROOT / "scripts/build.sh", "configure"],
@@ -403,7 +384,7 @@ def main() -> None:
         case "verify":
             subprocess.run(
                 [
-                    "python",
+                    sys.executable,
                     ROOT / "scripts/verify.py",
                     "--apk",
                     BUILD / APK_FILES[0],

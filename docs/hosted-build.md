@@ -4,9 +4,7 @@ Build on GitHub-hosted Linux. The local and hosted paths should use the same sta
 
 ## Run a candidate build
 
-Select **Build WebView** in GitHub Actions and choose the branch to build. Provide `inputs-url` and `inputs-sha256` for a prepared-input manifest. The workflow uses the staged Chromium dependencies described in [Prepare inputs](build.md#prepare-inputs). Automated cold intake is pending.
-
-The manifest is a JSON object with the keys `chromium`, `clang`, `gn`, `sdk`, and `jdk`. Each value is an ordered array of objects with an HTTPS `url` and a lowercase `sha256`. The workflow extracts the archives for each component into its own directory. Use rootless tar archives, with `DEPS` at the Chromium root, `gn` at the GN root, and `bin/java` at the JDK root. Supply the Chromium tree before the repository patch series and omit `third_party/jdk/current` so the workflow can link the staged JDK there. Audit the archives before making a manifest available to runners.
+Select **Build WebView** in GitHub Actions and choose the branch to build. The toolchain job builds the locked GN and Clang sources and shares its output through the branch's draft Release. On a cache miss, each build runner prepares the source tree and SDK from the repository locks before running GN. The hosted and local paths share the [input preparation script](../scripts/intake.py).
 
 Find the candidate APK and its license material in the branch's draft Release under the `apk-` asset name printed by the job. APK verification runs after the upload and also runs when an APK is reused.
 

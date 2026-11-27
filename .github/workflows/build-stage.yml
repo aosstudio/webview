@@ -8,19 +8,17 @@ on:
         type: string
       release:
         type: string
+      toolchain:
+        type: string
       plan:
         type: string
       matrices:
         type: string
-      inputs-url:
-        required: true
-        type: string
-      inputs-sha256:
-        required: true
-        type: string
     outputs:
       release:
         value: ${{ jobs.stage.outputs.release }}
+      toolchain:
+        value: ${{ jobs.stage.outputs.toolchain }}
       plan:
         value: ${{ jobs.stage.outputs.plan }}
       matrices:
@@ -36,13 +34,13 @@ jobs:
     runs-on: ubuntu-26.04
     outputs:
       release: ${{ steps.lookup.outputs.release }}
+      toolchain: ${{ steps.lookup.outputs.toolchain }}
       plan: ${{ steps.lookup.outputs.plan }}
       matrices: ${{ steps.matrices.outputs.matrices }}
     env:
       STAGE: ${{ inputs.stage }}
-      INPUTS_URL: ${{ inputs.inputs-url }}
-      INPUTS_SHA256: ${{ inputs.inputs-sha256 }}
       CACHE_RELEASE: ${{ inputs.release }}
+      CACHE_TOOLCHAIN: ${{ inputs.toolchain }}
       CACHE_PLAN: ${{ inputs.plan }}
       BUILD_MATRICES: ${{ inputs.matrices }}
     steps:
@@ -61,23 +59,30 @@ jobs:
         run: python scripts/hosted.py lookup "$STAGE"
 
       - name: Install build prerequisites
-        if: steps.lookup.outputs.hit == 'false'
+        if: steps.lookup.outputs.hit == 'false' && inputs.stage != 'toolchain'
         run: |
           sudo apt-get update
           sudo apt-get install --yes --no-install-recommends \
             bison bubblewrap flex gperf libasound2-dev libatk1.0-dev libdbus-1-dev \
             libdrm-dev libgbm-dev libglib2.0-dev libnspr4-dev libnss3-dev \
             libx11-dev libxcb1-dev libxcomposite-dev libxdamage-dev libxext-dev \
-            libxfixes-dev libxkbcommon-dev libxrandr-dev ninja-build pkgconf zstd
+            libxfixes-dev libxkbcommon-dev libxrandr-dev ninja-build pkgconf unzip zstd
+
+      - name: Install toolchain build prerequisites
+        if: steps.lookup.outputs.hit == 'false' && inputs.stage == 'toolchain'
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes --no-install-recommends \
+            clang-21 cmake g++ libzstd-dev ninja-build unzip zlib1g-dev zstd
 
       - name: Stage inputs and generate Ninja files
-        if: steps.lookup.outputs.hit == 'false'
+        if: steps.lookup.outputs.hit == 'false' && inputs.stage != 'toolchain'
         run: |
           python scripts/hosted.py setup "$STAGE"
           python scripts/hosted.py configure "$STAGE"
 
       - name: Restore prerequisite outputs
-        if: steps.lookup.outputs.hit == 'false' && inputs.stage != 'plan'
+        if: steps.lookup.outputs.hit == 'false' && inputs.stage != 'plan' && inputs.stage != 'toolchain'
         env:
           GH_TOKEN: ${{ github.token }}
         run: python scripts/hosted.py restore "$STAGE"

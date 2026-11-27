@@ -1,34 +1,25 @@
 # Build WebView for Android x86_64
 
-The initial build target is Chromium `156.0.8078.93`, using the Android 17 / API 37.0 platform and SDK Build Tools 36.0.0. Use Linux x86_64, disk-backed storage, and at least 100 GiB of free space for initial qualification. Install GNU Make, Ninja, Bubblewrap, jq and Python 3.14. [Chromium Android build requirements](https://chromium.googlesource.com/chromium/src/+/HEAD/docs/android_build_instructions.md)
+The initial build target is Chromium `156.0.8078.93`, using the Android 17 / API 37.0 platform and SDK Build Tools 36.0.0. Use Linux x86_64 and disk-backed storage. The preparation script uses Clang 21, CMake, Ninja, curl, unzip and Python 3.14. Configure and compile with Bubblewrap and jq. [Chromium Android build requirements](https://chromium.googlesource.com/chromium/src/+/HEAD/docs/android_build_instructions.md)
 
 ## Prepare inputs
 
-Use [the input lock](../locks/inputs.json) to verify the Chromium source snapshot, GN and LLVM inputs, and the Temurin, SDK, System stubs and NDK archives. Install the AOSStudio SDK packages in a dedicated SDK directory. Use the separate System API stubs JAR from the SDK Platform Release.
-
-The build entry takes a prepared Chromium tree. Populate the reviewed Git, Maven, Node and Rust inputs at the paths selected by the pinned `DEPS` and lockfiles, including generated version metadata. Stage the approved NDK r28c sysroot with the API 37 media codec header and the compiler-rt compatibility input used in the pilot. In that tree, the JDK belongs at `third_party/jdk/current`, the NDK at `third_party/android_toolchain/ndk`, and the released System stubs at `third_party/android_system_sdk/cipd/android_system.jar`. Use the reviewed source-built Clang and the matching compiler-rt builtins. Prepare dependencies without running unfiltered upstream download hooks. The cold intake and complete staging recipe are pending.
-
-Apply the patches once, in [series order](../patches/series), in the prepared Chromium source tree after its nested source dependencies have been populated. The patch set preserves Android platform location, face detection and the available Credential Manager WebAuthn path while removing the Play Services dependencies reached by this WebView target. The PocketFFT patch replaces the earlier FFT implementation. The build script applies [the WebView GN configuration](../config/webview.gn).
+Run the input preparation script with an empty output directory. It builds GN, Clang and the required compiler-rt libraries, installs the AOSStudio SDK platform and Build Tools from the locked SDK Release, and stages the Chromium dependency tree. It verifies each download against the repository locks and Chromium's pinned npm integrity values. Gitiles archives also have a source-tree digest so changes in compression metadata preserve the same pin. The script then writes the version metadata and applies the WebView patch series. [Input lock](../locks/inputs.json) · [Dependency lock](../locks/dependencies.json)
 
 ```sh
-export CHROMIUM_SRC=/path/to/prepared/chromium
-(
-    set -e
-    while IFS= read -r name; do
-        patch --directory "$CHROMIUM_SRC" --batch --forward --fuzz=0 -p1 \
-            --input "$PWD/patches/$name"
-    done < patches/series
-)
+python3 scripts/intake.py
 ```
 
 ## Compile and verify
 
-Set `GN` to the pinned GN executable if it is outside `PATH`. Use the same prepared sources and tools for a local build and any future hosted qualification.
+Use the prepared input paths for a local build.
 
 ```sh
-export ANDROID_HOME=/path/to/aosstudio/sdk
-export CLANG_ROOT=/path/to/prepared/clang
-export GN=/path/to/prepared/gn
+export CHROMIUM_SRC="$PWD/out/inputs/chromium"
+export ANDROID_HOME="$PWD/out/inputs/sdk"
+export JAVA_HOME="$PWD/out/inputs/jdk"
+export CLANG_ROOT="$PWD/out/inputs/clang"
+export GN="$PWD/out/inputs/gn/gn"
 make build JOBS=8
 ```
 
