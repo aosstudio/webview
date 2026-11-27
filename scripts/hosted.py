@@ -50,18 +50,15 @@ def identity(receipt: Receipt) -> tuple[int, str]:
     return receipt["id"], receipt["digest"]
 
 
-def host_image() -> list[str]:
-    return [
-        os.environ[name]
-        for name in ("RUNNER_OS", "RUNNER_ARCH", "ImageOS", "ImageVersion")
-    ]
+def host_platform() -> list[str]:
+    return [os.environ[name] for name in ("RUNNER_OS", "RUNNER_ARCH", "ImageOS")]
 
 
 def toolchain_name() -> str:
     inputs = json.loads((ROOT / "locks/inputs.json").read_text(encoding="utf-8"))
     fingerprint = stable_hash(
         {
-            "host": host_image(),
+            "host": host_platform(),
             "inputs": {name: inputs[name] for name in ("llvm", "gn", "ndk")},
             "bootstrap": checksum(ROOT / "scripts/bootstrap.sh"),
             "intake": checksum(ROOT / "scripts/intake.py"),
@@ -95,7 +92,7 @@ def plan_name(toolchain: Receipt) -> str:
         {
             "format": 1,
             "toolchain": identity(toolchain),
-            "host": host_image(),
+            "host": host_platform(),
             "python": python_version(),
             "recipe": {path: checksum(ROOT / path) for path in inputs},
         }
@@ -146,21 +143,24 @@ def lookup(cache: ReleaseCache, stage: str) -> None:
         toolchain = cache.lookup(release, os.environ["CACHE_TOOLCHAIN"], assets=assets)
         if toolchain is None:
             raise ValueError("Missing build toolchain in the branch's draft Release")
-        name = plan_name(toolchain)
         if stage == "plan":
+            name = plan_name(toolchain)
             hit = cache.lookup(release, name, assets=assets)
             if hit is not None:
                 cache.fetch(hit, STATE / "plan.json")
             job_output("plan", name)
         else:
-            if name != os.environ["CACHE_PLAN"]:
-                raise ValueError("Runner or checkout inputs differ from the plan job")
-            plan = cache.lookup(release, name, assets=assets)
+            plan_key = os.environ["CACHE_PLAN"]
+            plan = cache.lookup(release, plan_key, assets=assets)
             if plan is None:
                 raise ValueError("The plan was removed during the build")
             name = lookup_stage(cache, release, assets, stage, plan, upstream)
             hit = cache.lookup(release, name, assets=assets)
             if hit is None:
+                if plan_name(toolchain) != plan_key:
+                    raise ValueError(
+                        "Runner or checkout inputs differ from the plan job"
+                    )
                 cache.fetch(plan, STATE / "plan.json")
         if hit is None:
             cache.fetch(toolchain, STATE / "toolchain.tar.zst")
