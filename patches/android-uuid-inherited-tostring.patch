@@ -1,0 +1,18 @@
+Use the Object JNI binding for UUID.toString()
+
+SDK stub jars can represent toString() as an inherited method and omit
+the override from UUID.class. Use the existing java.lang.Object binding
+so the virtual JNI call still dispatches to UUID.toString() at runtime.
+
+--- a/base/uuid.h
++++ b/base/uuid.h
+@@ -24,2 +24,3 @@
+ #include "third_party/jni_zero/jni_zero.h"
++#include "third_party/jni_zero/system_jni/Object_jni.h"
+ #endif
+@@ -120,3 +121,3 @@ inline base::Uuid FromJniType<base::Uuid>(
+-  return base::Uuid::ParseLowercase(
+-      FromJniType<std::string>(env, JNI_UUID::Java_UUID_toString(env, obj)));
++  return base::Uuid::ParseLowercase(FromJniType<std::string>(
++      env, JNI_Object::Java_Object_toString(env, obj)));
+ }

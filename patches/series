@@ -1,4 +1,5 @@
 configurable-public-sdk.patch
+android-uuid-inherited-tostring.patch
 android-location-without-play-services.patch
 android-shape-detection-without-play-services.patch
 android-webotp-without-play-services.patch
