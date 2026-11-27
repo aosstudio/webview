@@ -7,9 +7,10 @@ from platform import python_version
 import re
 import subprocess
 import sys
+from tempfile import TemporaryDirectory
 from typing import TypedDict
 
-from intake import bootstrap, extract_tar, setup
+from intake import bootstrap, extract_tar, fetch, setup
 from plan import ROOT, SMOKE, Stage
 from release_cache import Asset, Receipt, ReleaseCache, checksum
 
@@ -210,6 +211,89 @@ def load_job() -> Job:
     return job
 
 
+def chromium_cache_digest(reference: str, auth: list[str], token: str) -> str | None:
+    result = subprocess.run(
+        ["oras", "manifest", "fetch", "--descriptor", *auth, reference],
+        input=token,
+        text=True,
+        capture_output=True,
+    )
+    if result.returncode:
+        failure = result.stderr.strip()
+        if failure.endswith(": not found"):
+            return None
+        raise RuntimeError(f"Could not look up {reference}: {failure}")
+    digest: str = json.loads(result.stdout)["digest"]
+    if not re.fullmatch(r"sha256:[0-9a-f]{64}", digest):
+        raise ValueError(f"Invalid manifest digest for {reference}: {digest}")
+    return digest
+
+
+def cache_chromium(stage: str) -> None:
+    source = json.loads((ROOT / "locks/inputs.json").read_text(encoding="utf-8"))[
+        "chromium"
+    ]
+    revision = source["commit"]
+    if not re.fullmatch(r"[0-9a-f]{40}", revision):
+        raise ValueError(f"Invalid Chromium commit {revision}")
+    repo = os.environ["GITHUB_REPOSITORY"]
+    package = f"ghcr.io/{repo.lower()}-chromium-source"
+    reference = f"{package}:{revision}"
+    auth = ["--username", os.environ["GITHUB_ACTOR"], "--password-stdin"]
+    token = os.environ["GHCR_TOKEN"] + "\n"
+    digest = chromium_cache_digest(reference, auth, token)
+    if digest is None and stage != "plan":
+        raise ValueError(f"Missing {reference}; the plan job fills the source cache")
+
+    filename = "chromium.tar.gz"
+    ARCHIVES.mkdir(parents=True, exist_ok=True)
+    if digest is None:
+        print(f"Fetch Chromium {revision} from Gitiles", flush=True)
+        archive = fetch(
+            ARCHIVES,
+            source["url"],
+            source["sha256"],
+            tree_digest=source["tree_sha256"],
+        )
+        # Another branch can publish the same snapshot during the upstream fetch.
+        if chromium_cache_digest(reference, auth, token) is not None:
+            print(f"Reuse {reference} published by another job", flush=True)
+            return
+        with TemporaryDirectory(dir=ARCHIVES) as directory:
+            (Path(directory) / filename).hardlink_to(archive)
+            print(f"Publish {reference}", flush=True)
+            subprocess.run(
+                [
+                    "oras",
+                    "push",
+                    *auth,
+                    "--artifact-type",
+                    "application/vnd.aosstudio.chromium.source.v1",
+                    "--annotation",
+                    f"org.opencontainers.image.source=https://github.com/{repo}",
+                    reference,
+                    f"{filename}:application/gzip",
+                ],
+                input=token,
+                text=True,
+                cwd=directory,
+                check=True,
+            )
+        return
+
+    print(f"Reuse {reference}@{digest}", flush=True)
+    if load_job()["hit"] is None:
+        with TemporaryDirectory(dir=ARCHIVES) as directory:
+            subprocess.run(
+                ["oras", "pull", *auth, "--output", directory, f"{package}@{digest}"],
+                input=token,
+                text=True,
+                check=True,
+            )
+            # The input staging code checks the locked archive or tree digest.
+            (Path(directory) / filename).replace(ARCHIVES / source["sha256"])
+
+
 def load_plan() -> dict[str, Stage]:
     plan: dict[str, Stage] = json.loads(
         (STATE / "plan.json").read_text(encoding="utf-8")
@@ -336,6 +420,7 @@ def main() -> None:
         "action",
         choices=(
             "lookup",
+            "chromium-cache",
             "setup",
             "verify-setup",
             "configure",
@@ -364,6 +449,8 @@ def main() -> None:
                     "plan.json" if args.stage == "plan" else "result.tar.zst"
                 )
                 cache.store(job["release"], job["name"], path)
+        case "chromium-cache":
+            cache_chromium(args.stage)
         case "setup" | "verify-setup":
             verify_only = args.action == "verify-setup"
             if not verify_only:

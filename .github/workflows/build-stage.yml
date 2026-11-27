@@ -24,9 +24,6 @@ on:
       matrices:
         value: ${{ jobs.stage.outputs.matrices }}
 
-permissions:
-  contents: write
-
 jobs:
   stage:
     name: ${{ inputs.stage }}
@@ -57,6 +54,17 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: python scripts/hosted.py lookup "$STAGE"
+
+      - uses: oras-project/setup-oras@ac735097e22fe643015b0d19645f7c9a69942128 # v2.0.4
+        if: inputs.stage == 'plan' || (steps.lookup.outputs.hit == 'false' && inputs.stage != 'toolchain')
+        with:
+          version: '1.4.0'
+
+      - name: Prepare Chromium source cache
+        if: inputs.stage == 'plan' || (steps.lookup.outputs.hit == 'false' && inputs.stage != 'toolchain')
+        env:
+          GHCR_TOKEN: ${{ github.token }}
+        run: python scripts/hosted.py chromium-cache "$STAGE"
 
       - name: Install build prerequisites
         if: steps.lookup.outputs.hit == 'false' && inputs.stage != 'toolchain'

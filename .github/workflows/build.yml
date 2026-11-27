@@ -27,6 +27,7 @@ jobs:
     needs: toolchain
     permissions:
       contents: write
+      packages: write
     uses: ./.github/workflows/build-stage.yml
     with:
       stage: plan
@@ -37,6 +38,7 @@ jobs:
     needs: [toolchain, plan]
     permissions:
       contents: write
+      packages: read
     uses: ./.github/workflows/build-stage.yml
     with:
       stage: smoke
@@ -49,6 +51,7 @@ jobs:
     needs: [toolchain, plan]
     permissions:
       contents: write
+      packages: read
     uses: ./.github/workflows/build-stage.yml
     with:
       stage: prepare-base
@@ -61,6 +64,7 @@ jobs:
     needs: [toolchain, plan, prepare-base]
     permissions:
       contents: write
+      packages: read
     strategy:
       fail-fast: false
       matrix:
@@ -77,6 +81,7 @@ jobs:
     needs: [toolchain, plan, prepare-compile]
     permissions:
       contents: write
+      packages: read
     uses: ./.github/workflows/build-stage.yml
     with:
       stage: prepare-finish
@@ -89,6 +94,7 @@ jobs:
     needs: [toolchain, plan, prepare-finish]
     permissions:
       contents: write
+      packages: read
     strategy:
       fail-fast: false
       matrix:
@@ -105,6 +111,7 @@ jobs:
     needs: [toolchain, plan, prepare-finish]
     permissions:
       contents: write
+      packages: read
     uses: ./.github/workflows/build-stage.yml
     with:
       stage: java
@@ -117,6 +124,7 @@ jobs:
     needs: [toolchain, plan, native]
     permissions:
       contents: write
+      packages: read
     uses: ./.github/workflows/build-stage.yml
     with:
       stage: link
@@ -129,6 +137,7 @@ jobs:
     needs: [toolchain, plan, smoke, link, java]
     permissions:
       contents: write
+      packages: read
     uses: ./.github/workflows/build-stage.yml
     with:
       stage: apk
