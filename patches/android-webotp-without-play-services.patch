@@ -1,0 +1,243 @@
+Allow the vanilla WebView build to omit the Play services WebOTP backend
+
+Upstream: https://issues.chromium.org/issues/40627649
+
+--- a/content/browser/BUILD.gn
++++ b/content/browser/BUILD.gn
+@@ -3303,8 +3303,6 @@
+       "renderer_host/screen_state.h",
+       "screen_orientation/screen_orientation_delegate_android.cc",
+       "screen_orientation/screen_orientation_delegate_android.h",
+-      "sms/sms_provider_gms.cc",
+-      "sms/sms_provider_gms.h",
+       "speech/speech_recognizer_impl_android.cc",
+       "speech/speech_recognizer_impl_android.h",
+       "speech/tts_android.cc",
+@@ -3319,6 +3317,13 @@
+       "web_contents/web_contents_view_android.h",
+     ]
+ 
++    if (enable_google_play_services_webotp) {
++      sources += [
++        "sms/sms_provider_gms.cc",
++        "sms/sms_provider_gms.h",
++      ]
++    }
++
+     deps += [
+       ":fontations_name_table_ffi",
+       ":reflection_jni_headers",
+--- a/content/browser/sms/sms_provider.cc
++++ b/content/browser/sms/sms_provider.cc
+@@ -10,11 +10,12 @@
+ 
+ #include "base/command_line.h"
+ #include "base/observer_list.h"
+-#include "build/build_config.h"
++#include "content/public/common/buildflags.h"
+ #include "content/public/common/content_switches.h"
+ #include "url/gurl.h"
+ #include "url/origin.h"
+-#if BUILDFLAG(IS_ANDROID)
++
++#if BUILDFLAG(ENABLE_GOOGLE_PLAY_SERVICES_WEBOTP)
+ #include "content/browser/sms/sms_provider_gms.h"
+ #endif
+ 
+@@ -25,7 +26,7 @@
+ 
+ // static
+ std::unique_ptr<SmsProvider> SmsProvider::Create() {
+-#if BUILDFLAG(IS_ANDROID)
++#if BUILDFLAG(ENABLE_GOOGLE_PLAY_SERVICES_WEBOTP)
+   return std::make_unique<SmsProviderGms>();
+ #else
+   return nullptr;
+@@ -72,14 +73,16 @@
+ void SmsProvider::NotifyFailure(FailureType failure_type) {
+   for (Observer& obs : observers_) {
+     bool handled = obs.OnFailure(failure_type);
+-    if (handled)
++    if (handled) {
+       break;
++    }
+   }
+ }
+ 
+ void SmsProvider::RecordParsingStatus(SmsParsingStatus status) {
+-  if (status == SmsParsingStatus::kParsed)
++  if (status == SmsParsingStatus::kParsed) {
+     return;
++  }
+ 
+   switch (status) {
+     case SmsParsingStatus::kOTPFormatRegexNotMatch:
+--- a/content/public/android/BUILD.gn
++++ b/content/public/android/BUILD.gn
+@@ -163,10 +163,6 @@
+     ":content_java_resources",
+     ":content_main_dex_java",
+     ":content_util_java",
+-    "$google_play_services_package:google_play_services_auth_api_phone_java",
+-    "$google_play_services_package:google_play_services_base_java",
+-    "$google_play_services_package:google_play_services_basement_java",
+-    "$google_play_services_package:google_play_services_tasks_java",
+     "//base:base_java",
+     "//base:flagged_apis_java",
+     "//base:process_launcher_java",
+@@ -241,7 +237,6 @@
+     ":is_ready_to_pay_service_aidl",
+     "//content/browser:client_data_json_generated_enum",
+     "//content/browser/accessibility:content_browser_accessibility_java_enums_srcjar",
+-    "//content/browser/sms:sms_provider_gms_backend_enum",
+     "//content/public/browser:bluetooth_chooser_event_javagen",
+     "//content/public/browser:digital_identity_enum",
+     "//content/public/browser:transfer_input_to_viz_result_enum",
+@@ -373,10 +368,6 @@
+     "java/src/org/chromium/content/browser/selection/SmartSelectionClient.java",
+     "java/src/org/chromium/content/browser/selection/SmartSelectionEventProcessor.java",
+     "java/src/org/chromium/content/browser/selection/SmartSelectionProvider.java",
+-    "java/src/org/chromium/content/browser/sms/SmsProviderGms.java",
+-    "java/src/org/chromium/content/browser/sms/SmsUserConsentReceiver.java",
+-    "java/src/org/chromium/content/browser/sms/SmsVerificationReceiver.java",
+-    "java/src/org/chromium/content/browser/sms/Wrappers.java",
+     "java/src/org/chromium/content/browser/webcontents/EmptyInternalAccessDelegate.java",
+     "java/src/org/chromium/content/browser/webcontents/WebContentsImpl.java",
+     "java/src/org/chromium/content/browser/webcontents/WebContentsObserverProxy.java",
+@@ -460,6 +451,22 @@
+     deps += [ "//third_party/androidx:androidx_activity_activity_java" ]
+   }
+ 
++  if (enable_google_play_services_webotp) {
++    deps += [
++      "$google_play_services_package:google_play_services_auth_api_phone_java",
++      "$google_play_services_package:google_play_services_base_java",
++      "$google_play_services_package:google_play_services_basement_java",
++      "$google_play_services_package:google_play_services_tasks_java",
++    ]
++    sources += [
++      "java/src/org/chromium/content/browser/sms/SmsProviderGms.java",
++      "java/src/org/chromium/content/browser/sms/SmsUserConsentReceiver.java",
++      "java/src/org/chromium/content/browser/sms/SmsVerificationReceiver.java",
++      "java/src/org/chromium/content/browser/sms/Wrappers.java",
++    ]
++    srcjar_deps += [ "//content/browser/sms:sms_provider_gms_backend_enum" ]
++  }
++
+   public_deps = [ "//ui/base/mojom:ui_base_types_java" ]
+ }
+ 
+@@ -558,7 +565,6 @@
+     "java/src/org/chromium/content/browser/selection/MagnifierSurfaceControl.java",
+     "java/src/org/chromium/content/browser/selection/SelectionPopupControllerImpl.java",
+     "java/src/org/chromium/content/browser/selection/SmartSelectionClient.java",
+-    "java/src/org/chromium/content/browser/sms/SmsProviderGms.java",
+     "java/src/org/chromium/content/browser/webcontents/WebContentsImpl.java",
+     "java/src/org/chromium/content/browser/webcontents/WebContentsObserverProxy.java",
+     "java/src/org/chromium/content_public/browser/ContactsDialogHost.java",
+@@ -570,6 +576,11 @@
+     "java/src/org/chromium/content_public/browser/SharedArrayBuffer.java",
+   ]
+ 
++  if (enable_google_play_services_webotp) {
++    sources +=
++        [ "java/src/org/chromium/content/browser/sms/SmsProviderGms.java" ]
++  }
++
+   if (enable_screen_capture) {
+     sources += [ "java/src/org/chromium/content_public/browser/media/capture/ScreenCapture.java" ]
+   }
+@@ -772,7 +783,6 @@
+     "junit/src/org/chromium/content/browser/selection/SelectionUtilsTest.java",
+     "junit/src/org/chromium/content/browser/selection/SmartSelectionEventProcessorTest.java",
+     "junit/src/org/chromium/content/browser/selection/SmartSelectionProviderTest.java",
+-    "junit/src/org/chromium/content/browser/sms/SmsProviderGmsTest.java",
+     "junit/src/org/chromium/content/browser/webcontents/WebContentsImplTest.java",
+     "junit/src/org/chromium/content/browser/webcontents/WebContentsObserverProxyTest.java",
+     "junit/src/org/chromium/content_public/browser/ContactsDialogHostTest.java",
+@@ -782,6 +792,11 @@
+     "junit/src/org/chromium/content_public/browser/media/capture/ScreenCaptureTest.java",
+   ]
+ 
++  if (enable_google_play_services_webotp) {
++    sources +=
++        [ "junit/src/org/chromium/content/browser/sms/SmsProviderGmsTest.java" ]
++  }
++
+   deps = [
+     ":content_java",
+     "//base:base_java",
+--- a/content/public/common/BUILD.gn
++++ b/content/public/common/BUILD.gn
+@@ -22,6 +22,7 @@
+   flags = [
+     "USE_EXTERNAL_POPUP_MENU=$use_external_popup_menu",
+     "ENABLE_DEVTOOLS_FRONTEND=$enable_devtools_frontend",
++    "ENABLE_GOOGLE_PLAY_SERVICES_WEBOTP=$enable_google_play_services_webotp",
+     "ENABLE_PLUGINS=$enable_plugins",
+     "ENABLE_SCREEN_CAPTURE=$enable_screen_capture",
+     "LOAD_WEBUI_FROM_DISK=$load_webui_from_disk",
+--- a/content/public/common/features.gni
++++ b/content/public/common/features.gni
+@@ -6,6 +6,10 @@
+ import("//build/config/features.gni")
+ 
+ declare_args() {
++  # Enables the Android WebOTP backend provided by Google Play services.
++  # Android WebView disables WebOTP by default (crbug.com/40627649).
++  enable_google_play_services_webotp = is_android
++
+   # Whether or not to use external popup menu.
+   use_external_popup_menu = is_android || (is_apple && use_blink)
+ 
+--- a/content/test/BUILD.gn
++++ b/content/test/BUILD.gn
+@@ -3215,7 +3215,8 @@
+   }
+ 
+   if (is_linux && enable_vr) {
+-    sources += [ "../services/isolated_xr_device/xr_sandbox_hook_linux_unittest.cc" ]
++    sources +=
++        [ "../services/isolated_xr_device/xr_sandbox_hook_linux_unittest.cc" ]
+   }
+ 
+   if (is_android || is_linux || is_chromeos || is_mac || is_win || is_fuchsia) {
+@@ -3627,14 +3628,11 @@
+       "../browser/font_unique_name_lookup/font_unique_name_lookup_android_unittest.cc",
+       "../browser/media/key_system_support_android_unittest.cc",
+       "../browser/renderer_host/render_widget_host_view_android_unittest.cc",
+-      "../browser/sms/sms_provider_gms_unittest.cc",
+       "../browser/web_contents/web_contents_view_android_unittest.cc",
+       "../renderer/java/gin_java_bridge_value_converter_unittest.cc",
+     ]
+ 
+     deps += [
+-      ":content_unittests_java",
+-      ":content_unittests_jni_headers",
+       "//base:base_unittest_support_java",
+       "//cc/slim",
+       "//components/crash/android:anr_collector_java",
+@@ -3654,6 +3652,14 @@
+       "//ui/events:motionevent_jni_headers",
+     ]
+ 
++    if (enable_google_play_services_webotp) {
++      sources += [ "../browser/sms/sms_provider_gms_unittest.cc" ]
++      deps += [
++        ":content_unittests_java",
++        ":content_unittests_jni_headers",
++      ]
++    }
++
+     if (enable_chrome_android_internal) {
+       data_deps += [ "//clank/build/bot/filters:content_unittests_filters" ]
+     }
+@@ -3857,7 +3863,7 @@
+   data_deps = [ "//testing:test_scripts_shared" ]
+ }
+ 
+-if (is_android) {
++if (is_android && enable_google_play_services_webotp) {
+   content_java_sources_needing_jni = [ "//content/public/android/javatests/src/org/chromium/content/browser/sms/SmsProviderFakes.java" ]
+ 
+   generate_jni("content_unittests_jni_headers") {

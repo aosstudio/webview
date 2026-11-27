@@ -1,0 +1,11 @@
+--- a/android_webview/BUILD.gn
++++ b/android_webview/BUILD.gn
+@@ -1113,6 +1113,8 @@
+         get_label_info("//components/resources", "target_gen_dir") +
+         "/about_credits.html"
+ 
++    inputs = [ _about_credits_file ]
++
+     grit_flags = [
+       "-w",
+       _allowlist,

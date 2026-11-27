@@ -1,0 +1,147 @@
+name: Build WebView
+
+on:
+  workflow_dispatch:
+    inputs:
+      inputs-url:
+        description: HTTPS URL of the prepared input manifest
+        required: true
+        type: string
+      inputs-sha256:
+        description: SHA-256 of the prepared input manifest
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: webview-build-${{ github.ref_name }}
+  cancel-in-progress: false
+
+jobs:
+  check:
+    uses: ./.github/workflows/ci.yml
+
+  plan:
+    needs: check
+    if: github.ref_type == 'branch'
+    permissions:
+      contents: write
+    uses: ./.github/workflows/build-stage.yml
+    with:
+      stage: plan
+      inputs-url: ${{ inputs.inputs-url }}
+      inputs-sha256: ${{ inputs.inputs-sha256 }}
+
+  smoke:
+    needs: plan
+    permissions:
+      contents: write
+    uses: ./.github/workflows/build-stage.yml
+    with:
+      stage: smoke
+      release: ${{ needs.plan.outputs.release }}
+      plan: ${{ needs.plan.outputs.plan }}
+      matrices: ${{ needs.plan.outputs.matrices }}
+      inputs-url: ${{ inputs.inputs-url }}
+      inputs-sha256: ${{ inputs.inputs-sha256 }}
+
+  prepare-base:
+    needs: plan
+    permissions:
+      contents: write
+    uses: ./.github/workflows/build-stage.yml
+    with:
+      stage: prepare-base
+      release: ${{ needs.plan.outputs.release }}
+      plan: ${{ needs.plan.outputs.plan }}
+      matrices: ${{ needs.plan.outputs.matrices }}
+      inputs-url: ${{ inputs.inputs-url }}
+      inputs-sha256: ${{ inputs.inputs-sha256 }}
+
+  prepare-compile:
+    needs: [plan, prepare-base]
+    permissions:
+      contents: write
+    strategy:
+      fail-fast: false
+      matrix:
+        stage: ${{ fromJSON(needs.plan.outputs.matrices).prepare }}
+    uses: ./.github/workflows/build-stage.yml
+    with:
+      stage: ${{ matrix.stage }}
+      release: ${{ needs.plan.outputs.release }}
+      plan: ${{ needs.plan.outputs.plan }}
+      matrices: ${{ needs.plan.outputs.matrices }}
+      inputs-url: ${{ inputs.inputs-url }}
+      inputs-sha256: ${{ inputs.inputs-sha256 }}
+
+  prepare-finish:
+    needs: [plan, prepare-compile]
+    permissions:
+      contents: write
+    uses: ./.github/workflows/build-stage.yml
+    with:
+      stage: prepare-finish
+      release: ${{ needs.plan.outputs.release }}
+      plan: ${{ needs.plan.outputs.plan }}
+      matrices: ${{ needs.plan.outputs.matrices }}
+      inputs-url: ${{ inputs.inputs-url }}
+      inputs-sha256: ${{ inputs.inputs-sha256 }}
+
+  native:
+    needs: [plan, prepare-finish]
+    permissions:
+      contents: write
+    strategy:
+      fail-fast: false
+      matrix:
+        stage: ${{ fromJSON(needs.plan.outputs.matrices).native }}
+    uses: ./.github/workflows/build-stage.yml
+    with:
+      stage: ${{ matrix.stage }}
+      release: ${{ needs.plan.outputs.release }}
+      plan: ${{ needs.plan.outputs.plan }}
+      matrices: ${{ needs.plan.outputs.matrices }}
+      inputs-url: ${{ inputs.inputs-url }}
+      inputs-sha256: ${{ inputs.inputs-sha256 }}
+
+  java:
+    needs: [plan, prepare-finish]
+    permissions:
+      contents: write
+    uses: ./.github/workflows/build-stage.yml
+    with:
+      stage: java
+      release: ${{ needs.plan.outputs.release }}
+      plan: ${{ needs.plan.outputs.plan }}
+      matrices: ${{ needs.plan.outputs.matrices }}
+      inputs-url: ${{ inputs.inputs-url }}
+      inputs-sha256: ${{ inputs.inputs-sha256 }}
+
+  link:
+    needs: [plan, native]
+    permissions:
+      contents: write
+    uses: ./.github/workflows/build-stage.yml
+    with:
+      stage: link
+      release: ${{ needs.plan.outputs.release }}
+      plan: ${{ needs.plan.outputs.plan }}
+      matrices: ${{ needs.plan.outputs.matrices }}
+      inputs-url: ${{ inputs.inputs-url }}
+      inputs-sha256: ${{ inputs.inputs-sha256 }}
+
+  apk:
+    needs: [plan, smoke, link, java]
+    permissions:
+      contents: write
+    uses: ./.github/workflows/build-stage.yml
+    with:
+      stage: apk
+      release: ${{ needs.plan.outputs.release }}
+      plan: ${{ needs.plan.outputs.plan }}
+      matrices: ${{ needs.plan.outputs.matrices }}
+      inputs-url: ${{ inputs.inputs-url }}
+      inputs-sha256: ${{ inputs.inputs-sha256 }}

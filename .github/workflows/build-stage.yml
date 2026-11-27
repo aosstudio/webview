@@ -1,0 +1,112 @@
+name: Build WebView stage
+
+on:
+  workflow_call:
+    inputs:
+      stage:
+        required: true
+        type: string
+      release:
+        type: string
+      plan:
+        type: string
+      matrices:
+        type: string
+      inputs-url:
+        required: true
+        type: string
+      inputs-sha256:
+        required: true
+        type: string
+    outputs:
+      release:
+        value: ${{ jobs.stage.outputs.release }}
+      plan:
+        value: ${{ jobs.stage.outputs.plan }}
+      matrices:
+        value: ${{ jobs.stage.outputs.matrices }}
+
+permissions:
+  contents: write
+
+jobs:
+  stage:
+    name: ${{ inputs.stage }}
+    if: github.ref_type == 'branch' && github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-26.04
+    outputs:
+      release: ${{ steps.lookup.outputs.release }}
+      plan: ${{ steps.lookup.outputs.plan }}
+      matrices: ${{ steps.matrices.outputs.matrices }}
+    env:
+      STAGE: ${{ inputs.stage }}
+      INPUTS_URL: ${{ inputs.inputs-url }}
+      INPUTS_SHA256: ${{ inputs.inputs-sha256 }}
+      CACHE_RELEASE: ${{ inputs.release }}
+      CACHE_PLAN: ${{ inputs.plan }}
+      BUILD_MATRICES: ${{ inputs.matrices }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: '3.14'
+
+      - name: Look up the stage output
+        id: lookup
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python scripts/hosted.py lookup "$STAGE"
+
+      - name: Install build prerequisites
+        if: steps.lookup.outputs.hit == 'false'
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes --no-install-recommends \
+            bison bubblewrap flex gperf libasound2-dev libatk1.0-dev libdbus-1-dev \
+            libdrm-dev libgbm-dev libglib2.0-dev libnspr4-dev libnss3-dev \
+            libx11-dev libxcb1-dev libxcomposite-dev libxdamage-dev libxext-dev \
+            libxfixes-dev libxkbcommon-dev libxrandr-dev ninja-build pkgconf zstd
+
+      - name: Stage inputs and generate Ninja files
+        if: steps.lookup.outputs.hit == 'false'
+        run: |
+          python scripts/hosted.py setup "$STAGE"
+          python scripts/hosted.py configure "$STAGE"
+
+      - name: Restore prerequisite outputs
+        if: steps.lookup.outputs.hit == 'false' && inputs.stage != 'plan'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python scripts/hosted.py restore "$STAGE"
+
+      - name: Build stage
+        if: steps.lookup.outputs.hit == 'false'
+        run: python scripts/hosted.py build "$STAGE"
+
+      - name: Save stage output to draft Release
+        if: steps.lookup.outputs.hit == 'false'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python scripts/hosted.py upload "$STAGE"
+
+      - name: Set compile matrices
+        id: matrices
+        if: inputs.stage == 'plan'
+        run: python scripts/hosted.py matrices "$STAGE"
+
+      - name: Restore APK candidate for verification
+        if: steps.lookup.outputs.hit == 'true' && inputs.stage == 'apk'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python scripts/hosted.py restore "$STAGE"
+
+      - name: Set up verification tools on a cache hit
+        if: steps.lookup.outputs.hit == 'true' && inputs.stage == 'apk'
+        run: python scripts/hosted.py verify-setup "$STAGE"
+
+      - name: Verify the APK candidate
+        if: inputs.stage == 'apk'
+        run: python scripts/hosted.py verify "$STAGE"

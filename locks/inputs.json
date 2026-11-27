@@ -1,0 +1,52 @@
+{
+  "chromium": {
+    "version": "156.0.8078.93",
+    "commit": "337f55dc817e82871bf6f8275394f2e9222b81b0",
+    "url": "https://chromium.googlesource.com/chromium/src/+archive/337f55dc817e82871bf6f8275394f2e9222b81b0.tar.gz",
+    "sha256": "c7d68829c61747c8f93bcdd23a3673416c4f2b7ea435843596282e64f627da56",
+    "deps_sha256": "48dad749ea67ff0dcab263a16d415c5262191749b08ae2062021a8dcfb84f748"
+  },
+  "gn": {
+    "commit": "510ec7992c30f172205792f190e96111a896ba8f",
+    "url": "https://gn.googlesource.com/gn/+archive/510ec7992c30f172205792f190e96111a896ba8f.tar.gz",
+    "sha256": "612a7bc70b85306d9ccd36f3d9d353151712d3998cf99f726a756bed3c9921fd"
+  },
+  "llvm": {
+    "commit": "62397f8b3c3986f54187ce08f00b3448ea1f8880",
+    "url": "https://codeload.github.com/llvm/llvm-project/tar.gz/62397f8b3c3986f54187ce08f00b3448ea1f8880",
+    "sha256": "d5a3470ca3a05be52114f71f1026ac1c0bb72ba180a725cd65cdaa78d5416a63"
+  },
+  "rust": {
+    "commit": "1edd55dcfcd573872c727fa3e086369a71661ee0",
+    "object_generation": 1789143384016025,
+    "sha256": "5a56edc35db24efbbe0373c724457c31a1febd75cbef6ac7fc9a1c5bca6fc697"
+  },
+  "jdk": {
+    "version": "25.0.4.1+1",
+    "url": "https://github.com/adoptium/temurin25-binaries/releases/download/jdk-25.0.4.1%2B1/OpenJDK25U-jdk_x64_linux_hotspot_25.0.4.1_1.tar.gz",
+    "sha256": "dbb698396d478e7fa2b1e50f4103324b2a99b90569ee27c33f2261f9215cf41e"
+  },
+  "sdk": {
+    "platform": "37.0",
+    "build_tools": "36.0.0",
+    "url": "https://github.com/aosstudio/sdk/releases/download/latest/aosstudio-sdk-37.0-linux-x86_64.tar.gz",
+    "sha256": "64deae051db90b342dba3a8a9f37c5eccc0aff2ac1fe20b527f10aa8231f8f8e"
+  },
+  "system_stubs": {
+    "url": "https://github.com/aosstudio/sdk-platform/releases/download/latest/aosstudio-system-stubs-37.0.jar",
+    "sha256": "74776c877cd70a6ca54f5b3fae987aef1984144d56c8a7862b1acf51256c03a5"
+  },
+  "ndk": {
+    "version": "28.2.13676358",
+    "url": "https://github.com/aosstudio/ndk/releases/download/latest/aosstudio-ndk-28.2.13676358-linux-x86_64.zip",
+    "sha256": "a1f689d378c1cdcb0f3d256da827bed996cbfbc34dcffc3a7b63d698f50896c1",
+    "media_header_url": "https://raw.githubusercontent.com/LineageOS/android_frameworks_av/1c5914737a1a89d0c5b3e52e8289019eab3f8cbf/media/ndk/include/media/NdkMediaCodecInfo.h",
+    "media_header_sha256": "cde27c6425c4cd2299d50e8fe6414662704ce74430e986705ec283683b28bcd3"
+  },
+  "apk": {
+    "filename": "SystemWebView64.apk",
+    "package": "com.android.webview",
+    "abi": "x86_64",
+    "target_sdk": 37
+  }
+}

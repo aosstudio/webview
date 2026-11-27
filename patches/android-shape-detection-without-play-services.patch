@@ -1,0 +1,408 @@
+--- a/build/config/android/config.gni
++++ b/build/config/android/config.gni
+@@ -240,6 +240,9 @@
+     # Compile the Google Play Services location provider into Android builds.
+     enable_google_play_services_location = true
+ 
++    # Compile the Google Play Services shape detectors into Android builds.
++    enable_google_play_services_shape_detection = true
++
+     if (current_cpu == "riscv64" && default_min_sdk_version < 37) {
+       # The Android NDK sysroot only provides RISC-V 64 libraries for API 37+.
+       android_ndk_api_level = 37
+--- a/services/BUILD.gn
++++ b/services/BUILD.gn
+@@ -200,14 +200,8 @@
+       "device/nfc/android/junit/src/org/chromium/device/nfc/NFCTest.java",
+       "device/nfc/android/junit/src/org/chromium/device/nfc/NfcBlocklistTest.java",
+       "device/serial/android/javatests/src/org/chromium/device/serial/ChromeSerialManagerTest.java",
+-      "shape_detection/android/junit/src/org/chromium/shape_detection/BitmapUtilsTest.java",
+     ]
+     deps = [
+-      "$google_play_services_package:google_play_services_base_java",
+-      "$google_play_services_package:google_play_services_basement_java",
+-      "$google_play_services_package:google_play_services_tasks_java",
+-      "$google_play_services_package:google_play_services_vision_common_java",
+-      "$google_play_services_package:google_play_services_vision_java",
+       "//base:base_java",
+       "//base:base_java_test_support",
+       "//base:base_junit_test_support",
+@@ -231,9 +225,26 @@
+       "//third_party/google-truth:google_truth_java",
+     ]
+ 
++    if (enable_google_play_services_location ||
++        enable_google_play_services_shape_detection) {
++      deps += [
++        "$google_play_services_package:google_play_services_base_java",
++        "$google_play_services_package:google_play_services_basement_java",
++      ]
++    }
+     if (enable_google_play_services_location) {
+       sources += [ "device/geolocation/android/junit/src/org/chromium/device/geolocation/LocationProviderTest.java" ]
+-      deps += [ "$google_play_services_package:google_play_services_location_java" ]
++      deps += [
++        "$google_play_services_package:google_play_services_location_java",
++        "$google_play_services_package:google_play_services_tasks_java",
++      ]
++    }
++    if (enable_google_play_services_shape_detection) {
++      sources += [ "shape_detection/android/junit/src/org/chromium/shape_detection/BitmapUtilsTest.java" ]
++      deps += [
++        "$google_play_services_package:google_play_services_vision_common_java",
++        "$google_play_services_package:google_play_services_vision_java",
++      ]
+     }
+ 
+     # Enable tests for MLKit-based implementations for AICore.
+@@ -242,35 +253,41 @@
+     }
+   }
+ 
+-  android_library("services_javatests") {
+-    testonly = true
+-    sources = [
+-      "shape_detection/android/javatests/src/org/chromium/shape_detection/BarcodeDetectionImplTest.java",
+-      "shape_detection/android/javatests/src/org/chromium/shape_detection/FaceDetectionImplTest.java",
+-      "shape_detection/android/javatests/src/org/chromium/shape_detection/TestUtils.java",
+-      "shape_detection/android/javatests/src/org/chromium/shape_detection/TextDetectionImplTest.java",
+-    ]
+-    deps = [
+-      "$google_play_services_package:google_play_services_base_java",
+-      "$google_play_services_package:google_play_services_basement_java",
+-      "$google_play_services_package:google_play_services_vision_common_java",
+-      "$google_play_services_package:google_play_services_vision_java",
+-      "//base:base_java",
+-      "//base:base_java_test_support",
+-      "//mojo/public/java:base_java",
+-      "//mojo/public/java:bindings_java",
+-      "//mojo/public/mojom/base:base_java",
+-      "//services/shape_detection:shape_detection_java",
+-      "//services/shape_detection/public/mojom:mojom_java",
+-      "//skia/public/mojom:mojom_java",
+-      "//third_party/android_deps:chromium_play_services_availability_java",
+-      "//third_party/androidx:androidx_test_runner_java",
+-      "//third_party/google-truth:google_truth_java",
+-      "//third_party/hamcrest:hamcrest_java",
+-      "//third_party/hamcrest:hamcrest_library_java",
+-      "//third_party/junit",
+-      "//ui/gfx/geometry/mojom:mojom_java",
+-    ]
+-    data = [ "test/data/" ]
++  if (enable_google_play_services_shape_detection) {
++    android_library("services_javatests") {
++      testonly = true
++      sources = [
++        "shape_detection/android/javatests/src/org/chromium/shape_detection/BarcodeDetectionImplTest.java",
++        "shape_detection/android/javatests/src/org/chromium/shape_detection/FaceDetectionImplTest.java",
++        "shape_detection/android/javatests/src/org/chromium/shape_detection/TestUtils.java",
++        "shape_detection/android/javatests/src/org/chromium/shape_detection/TextDetectionImplTest.java",
++      ]
++      deps = [
++        "$google_play_services_package:google_play_services_base_java",
++        "$google_play_services_package:google_play_services_basement_java",
++        "$google_play_services_package:google_play_services_vision_common_java",
++        "$google_play_services_package:google_play_services_vision_java",
++        "//base:base_java",
++        "//base:base_java_test_support",
++        "//mojo/public/java:base_java",
++        "//mojo/public/java:bindings_java",
++        "//mojo/public/mojom/base:base_java",
++        "//services/shape_detection:shape_detection_java",
++        "//services/shape_detection/public/mojom:mojom_java",
++        "//skia/public/mojom:mojom_java",
++        "//third_party/android_deps:chromium_play_services_availability_java",
++        "//third_party/androidx:androidx_test_runner_java",
++        "//third_party/google-truth:google_truth_java",
++        "//third_party/hamcrest:hamcrest_java",
++        "//third_party/hamcrest:hamcrest_library_java",
++        "//third_party/junit",
++        "//ui/gfx/geometry/mojom:mojom_java",
++      ]
++      data = [ "test/data/" ]
++    }
++  } else {
++    java_group("services_javatests") {
++      testonly = true
++    }
+   }
+ }
+--- a/services/shape_detection/BUILD.gn
++++ b/services/shape_detection/BUILD.gn
+@@ -124,21 +124,13 @@
+ 
+   android_library("shape_detection_java") {
+     sources = [
+-      "android/java/src/org/chromium/shape_detection/BarcodeDetectionImpl.java",
+-      "android/java/src/org/chromium/shape_detection/BarcodeDetectionProviderImpl.java",
+       "android/java/src/org/chromium/shape_detection/BitmapUtils.java",
+       "android/java/src/org/chromium/shape_detection/FaceDetectionImpl.java",
+-      "android/java/src/org/chromium/shape_detection/FaceDetectionImplGmsCore.java",
+       "android/java/src/org/chromium/shape_detection/FaceDetectionProviderImpl.java",
+       "android/java/src/org/chromium/shape_detection/InterfaceRegistrar.java",
+-      "android/java/src/org/chromium/shape_detection/TextDetectionImpl.java",
+     ]
+ 
+     deps = [
+-      "$google_play_services_package:google_play_services_base_java",
+-      "$google_play_services_package:google_play_services_basement_java",
+-      "$google_play_services_package:google_play_services_vision_common_java",
+-      "$google_play_services_package:google_play_services_vision_java",
+       "//base:base_java",
+       "//mojo/public/java:base_java",
+       "//mojo/public/java:bindings_java",
+@@ -147,10 +139,27 @@
+       "//mojo/public/mojom/base:base_java",
+       "//services/shape_detection/public/mojom:mojom_java",
+       "//skia/public/mojom:mojom_java",
+-      "//third_party/android_deps:chromium_play_services_availability_java",
+       "//third_party/jni_zero:jni_zero_java",
+       "//ui/gfx/geometry/mojom:mojom_java",
+     ]
++    if (enable_google_play_services_shape_detection) {
++      sources += [
++        "android/java/src/org/chromium/shape_detection/BarcodeDetectionImpl.java",
++        "android/java/src/org/chromium/shape_detection/BarcodeDetectionProviderImpl.java",
++        "android/java/src/org/chromium/shape_detection/FaceDetectionImplGmsCore.java",
++        "android/java/src/org/chromium/shape_detection/ShapeDetectionBackend.java",
++        "android/java/src/org/chromium/shape_detection/TextDetectionImpl.java",
++      ]
++      deps += [
++        "$google_play_services_package:google_play_services_base_java",
++        "$google_play_services_package:google_play_services_basement_java",
++        "$google_play_services_package:google_play_services_vision_common_java",
++        "$google_play_services_package:google_play_services_vision_java",
++        "//third_party/android_deps:chromium_play_services_availability_java",
++      ]
++    } else {
++      sources += [ "android/no_play_services/java/src/org/chromium/shape_detection/ShapeDetectionBackend.java" ]
++    }
+   }
+ }
+ 
+--- a/services/shape_detection/android/java/src/org/chromium/shape_detection/BarcodeDetectionImpl.java
++++ b/services/shape_detection/android/java/src/org/chromium/shape_detection/BarcodeDetectionImpl.java
+@@ -87,7 +87,7 @@
+             return;
+         }
+ 
+-        Frame frame = BitmapUtils.convertToFrame(bitmapData);
++        Frame frame = ShapeDetectionBackend.convertToFrame(bitmapData);
+         if (frame == null) {
+             Log.e(TAG, "Error converting Mojom Bitmap to Frame");
+             callback.call(new BarcodeDetectionResult[0]);
+--- a/services/shape_detection/android/java/src/org/chromium/shape_detection/BitmapUtils.java
++++ b/services/shape_detection/android/java/src/org/chromium/shape_detection/BitmapUtils.java
+@@ -7,14 +7,12 @@
+ 
+ import android.graphics.Bitmap;
+ 
+-import com.google.android.gms.vision.Frame;
+-
+ import org.chromium.mojo_base.BigBufferUtil;
+ 
+ import java.nio.ByteBuffer;
+ import org.chromium.build.annotations.Nullable;
+ 
+-/** Utility class to convert a Bitmap to a GMS core YUV Frame. */
++/** Converts a shared Skia bitmap to an Android bitmap. */
+ @NullMarked
+ public class BitmapUtils {
+     public static @Nullable Bitmap convertToBitmap(org.chromium.skia.mojom.BitmapN32 bitmapData) {
+@@ -44,14 +42,4 @@
+             return bitmap;
+         }
+     }
+-
+-    public static @Nullable Frame convertToFrame(org.chromium.skia.mojom.BitmapN32 bitmapData) {
+-        Bitmap bitmap = convertToBitmap(bitmapData);
+-        if (bitmap == null) {
+-            return null;
+-        }
+-
+-        // This constructor implies a pixel format conversion to YUV.
+-        return new Frame.Builder().setBitmap(bitmap).build();
+-    }
+ }
+--- a/services/shape_detection/android/java/src/org/chromium/shape_detection/FaceDetectionImplGmsCore.java
++++ b/services/shape_detection/android/java/src/org/chromium/shape_detection/FaceDetectionImplGmsCore.java
+@@ -74,7 +74,7 @@
+             return;
+         }
+ 
+-        Frame frame = BitmapUtils.convertToFrame(bitmapData);
++        Frame frame = ShapeDetectionBackend.convertToFrame(bitmapData);
+         if (frame == null) {
+             Log.e(TAG, "Error converting Mojom Bitmap to Frame");
+             callback.call(new FaceDetectionResult[0]);
+--- a/services/shape_detection/android/java/src/org/chromium/shape_detection/FaceDetectionProviderImpl.java
++++ b/services/shape_detection/android/java/src/org/chromium/shape_detection/FaceDetectionProviderImpl.java
+@@ -5,8 +5,6 @@
+ package org.chromium.shape_detection;
+ import org.chromium.build.annotations.NullMarked;
+ 
+-import org.chromium.base.ContextUtils;
+-import org.chromium.gms.ChromiumPlayServicesAvailability;
+ import org.chromium.mojo.bindings.InterfaceRequest;
+ import org.chromium.mojo.system.MojoException;
+ import org.chromium.shape_detection.mojom.FaceDetection;
+@@ -21,15 +19,7 @@
+     @Override
+     public void createFaceDetection(
+             InterfaceRequest<FaceDetection> request, FaceDetectorOptions options) {
+-        final boolean isGmsCoreSupported =
+-                ChromiumPlayServicesAvailability.isGooglePlayServicesAvailable(
+-                        ContextUtils.getApplicationContext());
+-
+-        if (isGmsCoreSupported) {
+-            FaceDetection.MANAGER.bind(new FaceDetectionImplGmsCore(options), request);
+-        } else {
+-            FaceDetection.MANAGER.bind(new FaceDetectionImpl(options), request);
+-        }
++        FaceDetection.MANAGER.bind(ShapeDetectionBackend.createFaceDetection(options), request);
+     }
+ 
+     @Override
+--- a/services/shape_detection/android/java/src/org/chromium/shape_detection/InterfaceRegistrar.java
++++ b/services/shape_detection/android/java/src/org/chromium/shape_detection/InterfaceRegistrar.java
+@@ -26,7 +26,7 @@
+         // Immediately wrap |nativeHandle| as it cannot be allowed to leak.
+         MessagePipeHandle handle = messagePipeHandleFromNative(nativeHandle);
+ 
+-        BarcodeDetectionProvider impl = BarcodeDetectionProviderImpl.create();
++        BarcodeDetectionProvider impl = ShapeDetectionBackend.createBarcodeDetectionProvider();
+         if (impl == null) {
+             handle.close();
+             return;
+@@ -46,7 +46,7 @@
+         // Immediately wrap |nativeHandle| as it cannot be allowed to leak.
+         MessagePipeHandle handle = messagePipeHandleFromNative(nativeHandle);
+ 
+-        TextDetection impl = TextDetectionImpl.create();
++        TextDetection impl = ShapeDetectionBackend.createTextDetection();
+         if (impl == null) {
+             handle.close();
+             return;
+--- a/services/shape_detection/android/java/src/org/chromium/shape_detection/TextDetectionImpl.java
++++ b/services/shape_detection/android/java/src/org/chromium/shape_detection/TextDetectionImpl.java
+@@ -46,7 +46,7 @@
+             return;
+         }
+ 
+-        Frame frame = BitmapUtils.convertToFrame(bitmapData);
++        Frame frame = ShapeDetectionBackend.convertToFrame(bitmapData);
+         if (frame == null) {
+             Log.e(TAG, "Error converting Mojom Bitmap to Frame");
+             callback.call(new TextDetectionResult[0]);
+--- a/services/shape_detection/android/junit/src/org/chromium/shape_detection/BitmapUtilsTest.java
++++ b/services/shape_detection/android/junit/src/org/chromium/shape_detection/BitmapUtilsTest.java
+@@ -38,7 +38,7 @@
+         bitmap.pixelData = null;
+         bitmap.imageInfo = new BitmapN32ImageInfo();
+ 
+-        assertNull(BitmapUtils.convertToFrame(bitmap));
++        assertNull(ShapeDetectionBackend.convertToFrame(bitmap));
+     }
+ 
+     /** Verify conversion fails if the sent dimensions are ugly. */
+@@ -51,7 +51,7 @@
+         bitmap.imageInfo.width = INVALID_WIDTH;
+         bitmap.imageInfo.height = VALID_HEIGHT;
+ 
+-        assertNull(BitmapUtils.convertToFrame(bitmap));
++        assertNull(ShapeDetectionBackend.convertToFrame(bitmap));
+     }
+ 
+     /** Verify conversion fails if Bitmap fails to wrap(). */
+@@ -64,6 +64,6 @@
+         bitmap.imageInfo.width = VALID_WIDTH;
+         bitmap.imageInfo.height = VALID_HEIGHT;
+ 
+-        assertNull(BitmapUtils.convertToFrame(bitmap));
++        assertNull(ShapeDetectionBackend.convertToFrame(bitmap));
+     }
+ }
+--- /dev/null
++++ b/services/shape_detection/android/java/src/org/chromium/shape_detection/ShapeDetectionBackend.java
+@@ -0,0 +1,49 @@
++// Copyright 2017 The Chromium Authors
++// Copyright 2026 AOSStudio contributors
++// Use of this source code is governed by a BSD-style license that can be
++// found in the LICENSE file.
++
++package org.chromium.shape_detection;
++
++import android.graphics.Bitmap;
++
++import com.google.android.gms.vision.Frame;
++
++import org.chromium.base.ContextUtils;
++import org.chromium.build.annotations.NullMarked;
++import org.chromium.build.annotations.Nullable;
++import org.chromium.gms.ChromiumPlayServicesAvailability;
++import org.chromium.shape_detection.mojom.BarcodeDetectionProvider;
++import org.chromium.shape_detection.mojom.FaceDetection;
++import org.chromium.shape_detection.mojom.FaceDetectorOptions;
++import org.chromium.shape_detection.mojom.TextDetection;
++import org.chromium.skia.mojom.BitmapN32;
++
++@NullMarked
++final class ShapeDetectionBackend {
++    private ShapeDetectionBackend() {}
++
++    static @Nullable BarcodeDetectionProvider createBarcodeDetectionProvider() {
++        return BarcodeDetectionProviderImpl.create();
++    }
++
++    static FaceDetection createFaceDetection(FaceDetectorOptions options) {
++        if (ChromiumPlayServicesAvailability.isGooglePlayServicesAvailable(
++                ContextUtils.getApplicationContext())) {
++            return new FaceDetectionImplGmsCore(options);
++        }
++        return new FaceDetectionImpl(options);
++    }
++
++    static @Nullable TextDetection createTextDetection() {
++        return TextDetectionImpl.create();
++    }
++
++    static @Nullable Frame convertToFrame(BitmapN32 bitmapData) {
++        Bitmap bitmap = BitmapUtils.convertToBitmap(bitmapData);
++        if (bitmap == null) return null;
++
++        // Building the frame converts the bitmap to YUV.
++        return new Frame.Builder().setBitmap(bitmap).build();
++    }
++}
+--- /dev/null
++++ b/services/shape_detection/android/no_play_services/java/src/org/chromium/shape_detection/ShapeDetectionBackend.java
+@@ -0,0 +1,29 @@
++// Copyright 2026 AOSStudio contributors
++// Use of this source code is governed by a BSD-style license that can be
++// found in the LICENSE file.
++
++package org.chromium.shape_detection;
++
++import org.chromium.build.annotations.NullMarked;
++import org.chromium.build.annotations.Nullable;
++import org.chromium.shape_detection.mojom.BarcodeDetectionProvider;
++import org.chromium.shape_detection.mojom.FaceDetection;
++import org.chromium.shape_detection.mojom.FaceDetectorOptions;
++import org.chromium.shape_detection.mojom.TextDetection;
++
++@NullMarked
++final class ShapeDetectionBackend {
++    private ShapeDetectionBackend() {}
++
++    static @Nullable BarcodeDetectionProvider createBarcodeDetectionProvider() {
++        return null;
++    }
++
++    static FaceDetection createFaceDetection(FaceDetectorOptions options) {
++        return new FaceDetectionImpl(options);
++    }
++
++    static @Nullable TextDetection createTextDetection() {
++        return null;
++    }
++}

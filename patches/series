@@ -1,0 +1,10 @@
+configurable-public-sdk.patch
+android-location-without-play-services.patch
+android-shape-detection-without-play-services.patch
+android-webotp-without-play-services.patch
+python-3.14-jinja-help.patch
+android-webauthn-with-android-credential-manager.patch
+apkbuilder-explicit-v4-signature.patch
+webview-target-scoped-credits.patch
+webview-grit-credits-input.patch
+webview-pocketfft.patch
