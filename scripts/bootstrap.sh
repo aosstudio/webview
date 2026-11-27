@@ -12,7 +12,7 @@ clang="$output/clang"
 ndk_tools="$ndk/toolchains/llvm/prebuilt/linux-x86_64"
 
 mkdir -p "$output/gn"
-CC=clang-21 CXX=clang++-21 "$python" "$sources/gn/build/gen.py" --no-last-commit-position --out-path="$work/gn"
+CC=clang-21 CXX=clang++-21 "$python" "$sources/gn/build/gen.py" --out-path="$work/gn"
 ninja -C "$work/gn" -j "$jobs" gn
 install -m 0755 "$work/gn/gn" "$output/gn/gn"
 install -m 0644 "$sources/gn/LICENSE" "$output/gn/LICENSE"
