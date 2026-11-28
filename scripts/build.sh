@@ -42,8 +42,9 @@ export JAVA_HOME="$src/third_party/jdk/current"
 test -x "$JAVA_HOME/bin/java"
 export PATH="${gn%/*}:$JAVA_HOME/bin:$PATH"
 
+# The JDK uses /tmp for in-place APK signing even when TMPDIR is set.
 sandbox=(bwrap --unshare-net --die-with-parent --ro-bind / / --dev /dev --proc /proc
-    --bind "$output" "$output" --ro-bind "$src" "$src" --ro-bind "$sdk" "$sdk"
+    --bind "$output" "$output" --bind "$output/tmp" /tmp --ro-bind "$src" "$src" --ro-bind "$sdk" "$sdk"
     --ro-bind "$clang" "$clang" --chdir "$src" --setenv HOME "$output/home"
     --setenv TMPDIR "$output/tmp" --setenv PYTHONDONTWRITEBYTECODE 1)
 
