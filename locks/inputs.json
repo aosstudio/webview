@@ -36,11 +36,11 @@
     "platform": "37.0",
     "build_tools": "36.0.0",
     "url": "https://github.com/aosstudio/sdk/releases/download/latest/aosstudio-sdk-37.0-linux-x86_64.tar.gz",
-    "sha256": "64deae051db90b342dba3a8a9f37c5eccc0aff2ac1fe20b527f10aa8231f8f8e"
+    "sha256": "df80391fda5f41faf4c55baa23dfcd23f33b55533861f125e3106b95d5e48f8d"
   },
   "system_stubs": {
     "url": "https://github.com/aosstudio/sdk-platform/releases/download/latest/aosstudio-system-stubs-37.0.jar",
-    "sha256": "74776c877cd70a6ca54f5b3fae987aef1984144d56c8a7862b1acf51256c03a5"
+    "sha256": "46ded8857ae21e9e6a909f76a173c27a25a96c6648775fb03b8c4768d6b08f4d"
   },
   "ndk": {
     "version": "28.2.13676358",
