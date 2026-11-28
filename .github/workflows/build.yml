@@ -1,0 +1,126 @@
+name: Build WebView
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: webview-build-${{ github.ref_name }}
+  cancel-in-progress: false
+
+jobs:
+  toolchain:
+    if: github.ref_type == 'branch'
+    permissions:
+      contents: write
+    uses: ./.github/workflows/build-stage.yml
+    with:
+      stage: toolchain
+
+  plan:
+    needs: toolchain
+    permissions:
+      contents: write
+      packages: write
+    uses: ./.github/workflows/build-stage.yml
+    with:
+      stage: plan
+      release: ${{ needs.toolchain.outputs.release }}
+
+  smoke:
+    needs: [toolchain, plan]
+    permissions:
+      contents: write
+      packages: read
+    uses: ./.github/workflows/build-stage.yml
+    with:
+      stage: smoke
+      release: ${{ needs.toolchain.outputs.release }}
+      matrices: ${{ needs.plan.outputs.matrices }}
+
+  prepare-base:
+    needs: [toolchain, plan]
+    permissions:
+      contents: write
+      packages: read
+    uses: ./.github/workflows/build-stage.yml
+    with:
+      stage: prepare-base
+      release: ${{ needs.toolchain.outputs.release }}
+      matrices: ${{ needs.plan.outputs.matrices }}
+
+  prepare-compile:
+    needs: [toolchain, plan, prepare-base]
+    permissions:
+      contents: write
+      packages: read
+    strategy:
+      fail-fast: false
+      matrix:
+        stage: ${{ fromJSON(needs.plan.outputs.matrices).prepare }}
+    uses: ./.github/workflows/build-stage.yml
+    with:
+      stage: ${{ matrix.stage }}
+      release: ${{ needs.toolchain.outputs.release }}
+      matrices: ${{ needs.plan.outputs.matrices }}
+
+  prepare-finish:
+    needs: [toolchain, plan, prepare-compile]
+    permissions:
+      contents: write
+      packages: read
+    uses: ./.github/workflows/build-stage.yml
+    with:
+      stage: prepare-finish
+      release: ${{ needs.toolchain.outputs.release }}
+      matrices: ${{ needs.plan.outputs.matrices }}
+
+  native:
+    needs: [toolchain, plan, prepare-finish]
+    permissions:
+      contents: write
+      packages: read
+    strategy:
+      fail-fast: false
+      matrix:
+        stage: ${{ fromJSON(needs.plan.outputs.matrices).native }}
+    uses: ./.github/workflows/build-stage.yml
+    with:
+      stage: ${{ matrix.stage }}
+      release: ${{ needs.toolchain.outputs.release }}
+      matrices: ${{ needs.plan.outputs.matrices }}
+
+  java:
+    needs: [toolchain, plan, prepare-finish]
+    permissions:
+      contents: write
+      packages: read
+    uses: ./.github/workflows/build-stage.yml
+    with:
+      stage: java
+      release: ${{ needs.toolchain.outputs.release }}
+      matrices: ${{ needs.plan.outputs.matrices }}
+
+  link:
+    needs: [toolchain, plan, native]
+    permissions:
+      contents: write
+      packages: read
+    uses: ./.github/workflows/build-stage.yml
+    with:
+      stage: link
+      release: ${{ needs.toolchain.outputs.release }}
+      matrices: ${{ needs.plan.outputs.matrices }}
+
+  apk:
+    needs: [toolchain, plan, smoke, link, java]
+    permissions:
+      contents: write
+      packages: read
+    uses: ./.github/workflows/build-stage.yml
+    with:
+      stage: apk
+      release: ${{ needs.toolchain.outputs.release }}
+      matrices: ${{ needs.plan.outputs.matrices }}

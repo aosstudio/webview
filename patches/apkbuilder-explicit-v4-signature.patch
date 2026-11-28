@@ -1,0 +1,14 @@
+--- a/build/android/gyp/apkbuilder.py
++++ b/build/android/gyp/apkbuilder.py
+@@ -266,8 +266,9 @@
+         # supported.
+         sign_cmd += ['--min-sdk-version', '1']
+ 
+-    # v4 signatures (.idsig files) require a v2 or v3 signature at the same time.
+-    # These are enabled by default.
++    # GN declares the v4 signature file as an output of APK packaging.
++    # https://issues.chromium.org/issues/372192123
++    sign_cmd += ['--v4-signing-enabled', 'true']
+ 
+     if _Requires64BitAlignment(android_abi):
+         sign_cmd += ['--lib-page-alignment', str(_64_BIT_PAGE_ALIGNMENT)]

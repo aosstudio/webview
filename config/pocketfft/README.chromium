@@ -1,0 +1,13 @@
+Name: PocketFFT
+Short Name: pocketfft
+URL: https://github.com/mreineck/pocketfft
+Version: N/A
+Revision: 33ae5dc94c9cdc7f1c78346504a85de87cadaa12
+Update Mechanism: Manual
+License: BSD-3-Clause, Apache-2.0
+License File: LICENSE.md, POCKETFFT-NOTICE, LICENSE-APACHE-2.0
+Security Critical: yes
+Shipped: yes
+Description:
+PocketFFT provides real Fourier transforms for the pinned TensorFlow Lite
+operators. The Apache-2.0 adapter is shared with the LineageOS guest build.

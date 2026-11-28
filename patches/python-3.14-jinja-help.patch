@@ -1,0 +1,14 @@
+Backport the argparse help-string fix from Chromium's Python 3.14 update.
+Upstream: https://chromium.googlesource.com/chromium/src/third_party/jni_zero/+/5fc8670fab8c5b45a68bdb54829674e65fd95226
+
+--- a/build/android/gyp/jinja_template.py
++++ b/build/android/gyp/jinja_template.py
+@@ -120,7 +120,7 @@
+     parser.add_argument(
+         '--includes',
+         default='',
+-        help="GN-list of files that get {% include %}'ed.",
++        help="GN-list of files that get {%% include %%}'ed.",
+     )
+     parser.add_argument(
+         '--output',

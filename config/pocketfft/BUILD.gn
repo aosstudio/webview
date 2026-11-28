@@ -1,0 +1,17 @@
+# SPDX-License-Identifier: Apache-2.0
+
+source_set("aosstudio_pocketfft") {
+  public = [ "guest_fft.h" ]
+  sources = [
+    "guest_fft.cc",
+    "pocketfft_hdronly.h",
+  ]
+  configs -= [
+    "//build/config/compiler:chromium_code",
+    "//build/config/compiler:no_exceptions",
+  ]
+  configs += [
+    "//build/config/compiler:exceptions",
+    "//build/config/compiler:no_chromium_code",
+  ]
+}

@@ -1,0 +1,7 @@
+# Linux x86-64, CPython 3.14. These tools stay on CI and development hosts.
+ruff==0.15.2 --hash=sha256:b7a672c82b5f9887576087d97be5ce439f04bbaf548ee987b92d3a7dede41d3a
+mypy==1.20.0 --hash=sha256:7d3243c406773185144527f83be0e0aefc7bf4601b0b2b956665608bf7c98a83
+typing-extensions==4.15.0 --hash=sha256:f0fa19c6845758ab08074a0cfa8b7aecb71c999ca73d62883bc25cc018c4e548
+mypy-extensions==1.1.0 --hash=sha256:1be4cccdb0f2482337c4743e60421de3a356cd97508abadd57d47403e94f5505
+pathspec==1.0.4 --hash=sha256:fb6ae2fd4e7c921a165808a552060e722767cfa526f99ca5156ed2ce45a5c723
+librt==0.8.1 --hash=sha256:6b1977c4ea97ce5eb7755a78fae68d87e4102e4aaf54985e8b56806849cc06a3

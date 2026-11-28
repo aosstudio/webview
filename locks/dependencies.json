@@ -1,0 +1,1119 @@
+{
+  "archives": {
+    "chromium/buildtools/linux64-format/clang-format": {
+      "url": "https://storage.googleapis.com/chromium-clang-format/f5485c39451137ee943021a0fb63738b306c5026?generation=1779297360709713",
+      "sha256": "5d384f2a3e72f01c5c61dd07e3a2577723cfa20c8c019131467f00fb6da8a75c",
+      "kind": "file",
+      "executable": true
+    },
+    "chromium/net/third_party/quiche/src": {
+      "url": "https://quiche.googlesource.com/quiche/+archive/a1628192cf32ba40d21e0dd80f485d68c24ff87a.tar.gz",
+      "sha256": "118e5c02eb895e8410a06d72f4accfc52dc1c2a254c46b00c55094dcdd32773e",
+      "kind": "tar",
+      "tree_sha256": "d7c1161addd9da51b4fa78d549c3c8bbb3a5cfb53d324ab3a9a98ba401a13bb8"
+    },
+    "chromium/third_party/android_build_tools/bazel_tools/cipd": {
+      "url": "https://chrome-infra-packages.appspot.com/dl/chromium/third_party/android_build_tools/bazel_tools/linux-amd64/+/WRpKnIedqlfgdR_eJAN0j_Wv5-3V-BExzakHQMyJZCAC",
+      "sha256": "591a4a9c879daa57e0751fde2403748ff5afe7edd5f81131cda90740cc896420",
+      "kind": "zip",
+      "members": [
+        "ijar",
+        "singlejar",
+        "zipper"
+      ]
+    },
+    "chromium/third_party/android_build_tools/error_prone/cipd": {
+      "url": "https://chrome-infra-packages.appspot.com/dl/chromium/third_party/android_build_tools/error_prone/+/TP-iwhtizFRV0x62m6MtiWtm4Wh9cYsTCOTYQM0zIiYC",
+      "sha256": "4cffa2c21b62cc5455d31eb69ba32d896b66e1687d718b1308e4d840cd332226",
+      "kind": "zip",
+      "members": [
+        "error_prone_core.jar"
+      ]
+    },
+    "chromium/third_party/android_build_tools/error_prone_javac/cipd": {
+      "url": "https://chrome-infra-packages.appspot.com/dl/chromium/third_party/android_build_tools/error_prone_javac/+/7EcHxlEXEaLRWEyHIAxf0ouPjkmN1Od6jkutuo0sfBIC",
+      "sha256": "ec4707c6511711a2d1584c87200c5fd28b8f8e498dd4e77a8e4badba8d2c7c12",
+      "kind": "zip",
+      "members": [
+        "javac.jar"
+      ]
+    },
+    "chromium/third_party/android_build_tools/manifest_merger/cipd": {
+      "url": "https://chrome-infra-packages.appspot.com/dl/chromium/third_party/android_build_tools/manifest_merger/+/UI1-nz58XA4IftX7frEhOBKof1qdVpX31Zjn4tE21f0C",
+      "sha256": "508d7e9f3e7c5c0e087ed5fb7eb1213812a87f5a9d5695f7d598e7e2d136d5fd",
+      "kind": "zip",
+      "members": [
+        "manifest-merger.jar"
+      ]
+    },
+    "chromium/third_party/android_build_tools/nullaway/cipd": {
+      "url": "https://chrome-infra-packages.appspot.com/dl/chromium/third_party/android_build_tools/nullaway/+/ds9Vm6LkQNc9O9nuG0_FbrsNQ5VoGPpFIWKur53l3wUC",
+      "sha256": "76cf559ba2e440d73d3bd9ee1b4fc56ebb0d43956818fa452162aeaf9de5df05",
+      "kind": "zip",
+      "members": [
+        "nullaway.jar"
+      ]
+    },
+    "chromium/third_party/android_build_tools/protoc/cipd": {
+      "url": "https://chrome-infra-packages.appspot.com/dl/chromium/third_party/android_build_tools/protoc/linux-amd64/+/BbpIii59vinz2WQrpbGQP7lFV2NK9kEl9qVo3kydMfEC",
+      "sha256": "05ba488a2e7dbe29f3d9642ba5b1903fb94557634af64125f6a568de4c9d31f1",
+      "kind": "zip",
+      "members": [
+        "protoc"
+      ]
+    },
+    "chromium/third_party/android_deps/autorolled/cipd/libs/com_google_code_findbugs_jsr305/jsr305.jar": {
+      "url": "https://repo.maven.apache.org/maven2/com/google/code/findbugs/jsr305/3.0.2/jsr305-3.0.2.jar",
+      "sha256": "766ad2a0783f2687962c8ad74ceecc38a28b9f72a2d085ee438b7813e928d0c7",
+      "kind": "file"
+    },
+    "chromium/third_party/android_deps/autorolled/cipd/libs/com_google_errorprone_error_prone_annotations/error_prone_annotations.jar": {
+      "url": "https://repo.maven.apache.org/maven2/com/google/errorprone/error_prone_annotations/2.50.0/error_prone_annotations-2.50.0.jar",
+      "sha256": "4667724877f1d37a689202da191e23efa7657c62eef93ccdac406eccfe5cdd0a",
+      "kind": "file"
+    },
+    "chromium/third_party/android_deps/autorolled/cipd/libs/com_google_guava_failureaccess/failureaccess.jar": {
+      "url": "https://repo.maven.apache.org/maven2/com/google/guava/failureaccess/1.0.3/failureaccess-1.0.3.jar",
+      "sha256": "cbfc3906b19b8f55dd7cfd6dfe0aa4532e834250d7f080bd8d211a3e246b59cb",
+      "kind": "file"
+    },
+    "chromium/third_party/android_deps/autorolled/cipd/libs/com_google_guava_guava/guava.jar": {
+      "url": "https://repo.maven.apache.org/maven2/com/google/guava/guava/33.7.1-jre/guava-33.7.1-jre.jar",
+      "sha256": "796d8e28ac64e83a47c4c5935a8fecc4682650a04bbdead738ef0f5a3a0e6c46",
+      "kind": "file"
+    },
+    "chromium/third_party/android_deps/autorolled/cipd/libs/com_google_j2objc_j2objc_annotations/j2objc-annotations.jar": {
+      "url": "https://repo.maven.apache.org/maven2/com/google/j2objc/j2objc-annotations/3.1/j2objc-annotations-3.1.jar",
+      "sha256": "84d3a150518485f8140ea99b8a985656749629f6433c92b80c75b36aba3b099b",
+      "kind": "file"
+    },
+    "chromium/third_party/android_deps/autorolled/cipd/libs/com_google_protobuf_protobuf_javalite/protobuf-javalite.jar": {
+      "url": "https://repo.maven.apache.org/maven2/com/google/protobuf/protobuf-javalite/4.36.2/protobuf-javalite-4.36.2.jar",
+      "sha256": "8f4f93d08cb37130ecb0bc69d376d7d27c36ff04ddb1bb27430b06caa9fa062e",
+      "kind": "file"
+    },
+    "chromium/third_party/android_deps/autorolled/cipd/libs/org_jetbrains_kotlinx_kotlinx_coroutines_android/kotlinx-coroutines-android.jar": {
+      "url": "https://repo.maven.apache.org/maven2/org/jetbrains/kotlinx/kotlinx-coroutines-android/1.11.0/kotlinx-coroutines-android-1.11.0.jar",
+      "sha256": "c2cb206d27017c7d1bf5ff179787397543d13748dbabb0d7237e1585e0b29044",
+      "kind": "file"
+    },
+    "chromium/third_party/android_deps/autorolled/cipd/libs/org_jetbrains_kotlinx_kotlinx_coroutines_core_jvm/kotlinx-coroutines-core-jvm.jar": {
+      "url": "https://repo.maven.apache.org/maven2/org/jetbrains/kotlinx/kotlinx-coroutines-core-jvm/1.11.0/kotlinx-coroutines-core-jvm-1.11.0.jar",
+      "sha256": "d1d75aa01dffbb4d1c520e67e4c4e7f5f6174718e7cb4632412503f2f0e604fa",
+      "kind": "file"
+    },
+    "chromium/third_party/android_deps/autorolled/cipd/libs/org_jetbrains_kotlinx_kotlinx_serialization_core_jvm/kotlinx-serialization-core-jvm.jar": {
+      "url": "https://repo.maven.apache.org/maven2/org/jetbrains/kotlinx/kotlinx-serialization-core-jvm/1.7.3/kotlinx-serialization-core-jvm-1.7.3.jar",
+      "sha256": "f0adde45864144475385cf4aa7e0b7feb27f61fcf9472665ed98cc971b06b1eb",
+      "kind": "file"
+    },
+    "chromium/third_party/android_deps/autorolled/cipd/libs/org_jspecify_jspecify/jspecify.jar": {
+      "url": "https://repo.maven.apache.org/maven2/org/jspecify/jspecify/1.0.1/jspecify-1.0.1.jar",
+      "sha256": "070d75f261fe4c5b8202508366715f7f2d4660f88c8ef7e6d3575e48c9683b66",
+      "kind": "file"
+    },
+    "chromium/third_party/androidx/cipd": {
+      "url": "https://chrome-infra-packages.appspot.com/dl/chromium/third_party/androidx/+/BPpMyM0SWd-E1wUl8rg83DvakkDwYKkwEfy561BXtXkC",
+      "sha256": "04fa4cc8cd1259df84d70525f2b83cdc3bda9240f060a93011fcb9eb5057b579",
+      "kind": "zip",
+      "members": [
+        "libs/androidx_activity_activity/activity.aar",
+        "libs/androidx_activity_activity/README.chromium",
+        "libs/androidx_activity_activity/LICENSE",
+        "libs/androidx_annotation_annotation_experimental/annotation-experimental.aar",
+        "libs/androidx_annotation_annotation_experimental/README.chromium",
+        "libs/androidx_annotation_annotation_experimental/LICENSE",
+        "libs/androidx_annotation_annotation_jvm/annotation-jvm.jar",
+        "libs/androidx_annotation_annotation_jvm/README.chromium",
+        "libs/androidx_annotation_annotation_jvm/LICENSE",
+        "libs/androidx_appcompat_appcompat/appcompat.aar",
+        "libs/androidx_appcompat_appcompat/README.chromium",
+        "libs/androidx_appcompat_appcompat/LICENSE",
+        "libs/androidx_appcompat_appcompat_resources/appcompat-resources.aar",
+        "libs/androidx_appcompat_appcompat_resources/README.chromium",
+        "libs/androidx_appcompat_appcompat_resources/LICENSE",
+        "libs/androidx_arch_core_core_common/core-common.jar",
+        "libs/androidx_arch_core_core_common/README.chromium",
+        "libs/androidx_arch_core_core_common/LICENSE",
+        "libs/androidx_arch_core_core_runtime/core-runtime.aar",
+        "libs/androidx_arch_core_core_runtime/README.chromium",
+        "libs/androidx_arch_core_core_runtime/LICENSE",
+        "libs/androidx_collection_collection_jvm/collection-jvm.jar",
+        "libs/androidx_collection_collection_jvm/README.chromium",
+        "libs/androidx_collection_collection_jvm/LICENSE",
+        "libs/androidx_compose_runtime_runtime_annotation_android/runtime-annotation-android.aar",
+        "libs/androidx_compose_runtime_runtime_annotation_android/README.chromium",
+        "libs/androidx_compose_runtime_runtime_annotation_android/LICENSE",
+        "libs/androidx_concurrent_concurrent_futures/concurrent-futures.jar",
+        "libs/androidx_concurrent_concurrent_futures/README.chromium",
+        "libs/androidx_concurrent_concurrent_futures/LICENSE",
+        "libs/androidx_core_core/core.aar",
+        "libs/androidx_core_core/README.chromium",
+        "libs/androidx_core_core/LICENSE",
+        "libs/androidx_core_core_animation/core-animation.aar",
+        "libs/androidx_core_core_animation/README.chromium",
+        "libs/androidx_core_core_animation/LICENSE",
+        "libs/androidx_core_core_ktx/core-ktx.aar",
+        "libs/androidx_core_core_ktx/README.chromium",
+        "libs/androidx_core_core_ktx/LICENSE",
+        "libs/androidx_core_core_viewtree/core-viewtree.aar",
+        "libs/androidx_core_core_viewtree/README.chromium",
+        "libs/androidx_core_core_viewtree/LICENSE",
+        "libs/androidx_cursoradapter_cursoradapter/cursoradapter.aar",
+        "libs/androidx_cursoradapter_cursoradapter/README.chromium",
+        "libs/androidx_cursoradapter_cursoradapter/LICENSE",
+        "libs/androidx_customview_customview/customview.aar",
+        "libs/androidx_customview_customview/README.chromium",
+        "libs/androidx_customview_customview/LICENSE",
+        "libs/androidx_documentfile_documentfile/documentfile.aar",
+        "libs/androidx_documentfile_documentfile/README.chromium",
+        "libs/androidx_documentfile_documentfile/LICENSE",
+        "libs/androidx_drawerlayout_drawerlayout/drawerlayout.aar",
+        "libs/androidx_drawerlayout_drawerlayout/README.chromium",
+        "libs/androidx_drawerlayout_drawerlayout/LICENSE",
+        "libs/androidx_emoji2_emoji2/emoji2.aar",
+        "libs/androidx_emoji2_emoji2/README.chromium",
+        "libs/androidx_emoji2_emoji2/LICENSE",
+        "libs/androidx_emoji2_emoji2_views_helper/emoji2-views-helper.aar",
+        "libs/androidx_emoji2_emoji2_views_helper/README.chromium",
+        "libs/androidx_emoji2_emoji2_views_helper/LICENSE",
+        "libs/androidx_fragment_fragment/fragment.aar",
+        "libs/androidx_fragment_fragment/README.chromium",
+        "libs/androidx_fragment_fragment/LICENSE",
+        "libs/androidx_lifecycle_lifecycle_common_jvm/lifecycle-common-jvm.jar",
+        "libs/androidx_lifecycle_lifecycle_common_jvm/README.chromium",
+        "libs/androidx_lifecycle_lifecycle_common_jvm/LICENSE",
+        "libs/androidx_lifecycle_lifecycle_livedata_core/lifecycle-livedata-core.aar",
+        "libs/androidx_lifecycle_lifecycle_livedata_core/README.chromium",
+        "libs/androidx_lifecycle_lifecycle_livedata_core/LICENSE",
+        "libs/androidx_lifecycle_lifecycle_process/lifecycle-process.aar",
+        "libs/androidx_lifecycle_lifecycle_process/README.chromium",
+        "libs/androidx_lifecycle_lifecycle_process/LICENSE",
+        "libs/androidx_lifecycle_lifecycle_runtime_android/lifecycle-runtime-android.aar",
+        "libs/androidx_lifecycle_lifecycle_runtime_android/README.chromium",
+        "libs/androidx_lifecycle_lifecycle_runtime_android/LICENSE",
+        "libs/androidx_lifecycle_lifecycle_viewmodel_android/lifecycle-viewmodel-android.aar",
+        "libs/androidx_lifecycle_lifecycle_viewmodel_android/README.chromium",
+        "libs/androidx_lifecycle_lifecycle_viewmodel_android/LICENSE",
+        "libs/androidx_lifecycle_lifecycle_viewmodel_ktx/lifecycle-viewmodel-ktx.aar",
+        "libs/androidx_lifecycle_lifecycle_viewmodel_ktx/README.chromium",
+        "libs/androidx_lifecycle_lifecycle_viewmodel_ktx/LICENSE",
+        "libs/androidx_lifecycle_lifecycle_viewmodel_savedstate_android/lifecycle-viewmodel-savedstate-android.aar",
+        "libs/androidx_lifecycle_lifecycle_viewmodel_savedstate_android/README.chromium",
+        "libs/androidx_lifecycle_lifecycle_viewmodel_savedstate_android/LICENSE",
+        "libs/androidx_loader_loader/loader.aar",
+        "libs/androidx_loader_loader/README.chromium",
+        "libs/androidx_loader_loader/LICENSE",
+        "libs/androidx_navigationevent_navigationevent_android/navigationevent-android.aar",
+        "libs/androidx_navigationevent_navigationevent_android/README.chromium",
+        "libs/androidx_navigationevent_navigationevent_android/LICENSE",
+        "libs/androidx_privacysandbox_ads_ads_adservices/ads-adservices.aar",
+        "libs/androidx_privacysandbox_ads_ads_adservices/README.chromium",
+        "libs/androidx_privacysandbox_ads_ads_adservices/LICENSE",
+        "libs/androidx_privacysandbox_ads_ads_adservices_java/ads-adservices-java.aar",
+        "libs/androidx_privacysandbox_ads_ads_adservices_java/README.chromium",
+        "libs/androidx_privacysandbox_ads_ads_adservices_java/LICENSE",
+        "libs/androidx_resourceinspection_resourceinspection_annotation/resourceinspection-annotation.jar",
+        "libs/androidx_resourceinspection_resourceinspection_annotation/README.chromium",
+        "libs/androidx_resourceinspection_resourceinspection_annotation/LICENSE",
+        "libs/androidx_savedstate_savedstate_android/savedstate-android.aar",
+        "libs/androidx_savedstate_savedstate_android/README.chromium",
+        "libs/androidx_savedstate_savedstate_android/LICENSE",
+        "libs/androidx_startup_startup_runtime/startup-runtime.aar",
+        "libs/androidx_startup_startup_runtime/README.chromium",
+        "libs/androidx_startup_startup_runtime/LICENSE",
+        "libs/androidx_tracing_tracing_android/tracing-android.aar",
+        "libs/androidx_tracing_tracing_android/README.chromium",
+        "libs/androidx_tracing_tracing_android/LICENSE",
+        "libs/androidx_vectordrawable_vectordrawable/vectordrawable.aar",
+        "libs/androidx_vectordrawable_vectordrawable/README.chromium",
+        "libs/androidx_vectordrawable_vectordrawable/LICENSE",
+        "libs/androidx_vectordrawable_vectordrawable_animated/vectordrawable-animated.aar",
+        "libs/androidx_vectordrawable_vectordrawable_animated/README.chromium",
+        "libs/androidx_vectordrawable_vectordrawable_animated/LICENSE",
+        "libs/androidx_versionedparcelable_versionedparcelable/versionedparcelable.aar",
+        "libs/androidx_versionedparcelable_versionedparcelable/README.chromium",
+        "libs/androidx_versionedparcelable_versionedparcelable/LICENSE",
+        "libs/androidx_viewpager_viewpager/viewpager.aar",
+        "libs/androidx_viewpager_viewpager/README.chromium",
+        "libs/androidx_viewpager_viewpager/LICENSE"
+      ]
+    },
+    "chromium/third_party/androidx_javascriptengine/src": {
+      "url": "https://chromium.googlesource.com/aosp/platform/frameworks/support/javascriptengine/javascriptengine/src.git/+archive/7539442db1dc790c64d0d9bade922329292d834b.tar.gz",
+      "sha256": "742a07e667354aeed274d9873b0ee559fa4b83e2454be696b0c000fc4e025561",
+      "kind": "tar",
+      "tree_sha256": "64dc2bf9ca65a8cfc96226f62e85abed985313606cf9e78b87963e139fe40fe6"
+    },
+    "chromium/third_party/angle": {
+      "url": "https://chromium.googlesource.com/angle/angle/+archive/f10470c77e4810ece55cbe8e08469a31610e92f4.tar.gz",
+      "sha256": "e5013a399e0142ee05b737efdc82066bad3f894db4e03aa0afe0fc207c9ab2dc",
+      "kind": "tar",
+      "tree_sha256": "1be190600536bd857e2650f4d7effc44cccd37fd943ef3968363f22f5a8e2da4"
+    },
+    "chromium/third_party/anonymous_tokens/src": {
+      "url": "https://chromium.googlesource.com/external/github.com/google/anonymous-tokens.git/+archive/1ae8df5e40bab28959cc182c2c0d88923059e278.tar.gz",
+      "sha256": "3fa7b98a9c71a859ba0f69bb217f268f8f5f48644971b5a8c9e38b4374c1ca7a",
+      "kind": "tar",
+      "tree_sha256": "4ab61cb987666ac45f1204b3e40841a344cade5ced3f8c0accbcb53ed0c1d6b7"
+    },
+    "chromium/third_party/aosstudio_pocketfft/LICENSE.md": {
+      "url": "https://raw.githubusercontent.com/mreineck/pocketfft/33ae5dc94c9cdc7f1c78346504a85de87cadaa12/LICENSE.md",
+      "sha256": "a85ca13fdf90160b64a0698215868c13b74d835ad0a4e2ba44713b8c5058a056",
+      "kind": "file"
+    },
+    "chromium/third_party/aosstudio_pocketfft/pocketfft_hdronly.h": {
+      "url": "https://raw.githubusercontent.com/mreineck/pocketfft/33ae5dc94c9cdc7f1c78346504a85de87cadaa12/pocketfft_hdronly.h",
+      "sha256": "50f4ddbe60432325f560c706b6f1c49f9e0949fc7f20ae6499f2299e37d9790c",
+      "kind": "file"
+    },
+    "chromium/third_party/boringssl/src": {
+      "url": "https://boringssl.googlesource.com/boringssl/+archive/2ea3200c3a3ec176613ab7a0b9a4ffc6db846120.tar.gz",
+      "sha256": "41428910564bc12fe6aa2016e4a12f49a847de188aa174eec179c3396bd03f9b",
+      "kind": "tar",
+      "tree_sha256": "792cc65e5307a4fdd8cc1e18578c08504792e11515f6d652233a88c1470e312e"
+    },
+    "chromium/third_party/cast_core/public/src": {
+      "url": "https://chromium.googlesource.com/cast_core/public/+archive/f5ee589bdaea60418f670fa176be15ccb9a34942.tar.gz",
+      "sha256": "f82dabd6aa6d64b6ea23b34b89d104343ee2e14b953e11aa3a7564630642fb9e",
+      "kind": "tar",
+      "tree_sha256": "1c33ffd84450e187a4bec415b956b7858af8fa21640c27da54577fe4a2457cd9"
+    },
+    "chromium/third_party/catapult": {
+      "url": "https://chromium.googlesource.com/catapult/+archive/f411808cd159db5e47be79ebee59fffca3da1bd4.tar.gz",
+      "sha256": "d1b75245e3fe8e1d0638f7efb167a842dc244d08af60b23c8981e74efe37a391",
+      "kind": "tar",
+      "tree_sha256": "cc2c898a8589512cfdb0fbf6fbbedc81bb05420851ccd90bb3ddf152a549c327"
+    },
+    "chromium/third_party/ced/src": {
+      "url": "https://chromium.googlesource.com/external/github.com/google/compact_enc_det.git/+archive/d127078cedef9c6642cbe592dacdd2292b50bb19.tar.gz",
+      "sha256": "2643d1ce48aea794b107eecd0ef3db9cfe7f15b2a7a9389f59e60aeedc0690f8",
+      "kind": "tar",
+      "tree_sha256": "bcb7a2db50b1192fa4068d6b9553c04a1985e9af27536c515ba27d4f69f76526"
+    },
+    "chromium/third_party/cld_3/src": {
+      "url": "https://chromium.googlesource.com/external/github.com/google/cld_3/+archive/b48dc46512566f5a2d41118c8c1116c4f96dc661.tar.gz",
+      "sha256": "c65f9c206060f33e4808402c71a9f34387077ade1aaae26a9266205fc26baccb",
+      "kind": "tar",
+      "tree_sha256": "2bfaec4f25323d94c360f34740f585dc5c07cef1e5fa22602413957db46242bd"
+    },
+    "chromium/third_party/compiler-rt/src": {
+      "url": "https://chromium.googlesource.com/external/github.com/llvm/llvm-project/compiler-rt/+archive/627967b9c76e9a9d09a29e2c48a9283556f5a3a3.tar.gz",
+      "sha256": "1fb4c7e66d923cbd1b40dafee4c145cf928ab5205866400bb2344b5c09262373",
+      "kind": "tar",
+      "tree_sha256": "c7b74bb847bf197ad555fe4c3e70a8b307f66e489c9e6c3c54639f0a429cb64d"
+    },
+    "chromium/third_party/cpu_features/src": {
+      "url": "https://chromium.googlesource.com/external/github.com/google/cpu_features/+archive/81d13c49649f0714dd41fb56bb246398b6584085.tar.gz",
+      "sha256": "9d57b645c5883a8b4ea655b30b88a775b6711e0237fc998c6a757c9520279f93",
+      "kind": "tar",
+      "tree_sha256": "71a33a9fff8b52510056bba3d83250520d0c595f1c8353b57a172532bd5b25fa"
+    },
+    "chromium/third_party/cpuinfo/src": {
+      "url": "https://chromium.googlesource.com/external/github.com/pytorch/cpuinfo.git/+archive/66ee79c038d70dad9f08705b2c9b3e58f6d8f512.tar.gz",
+      "sha256": "83dfcd39e95994c2f010e1db4249cc31d74f3c9ac53994b5aac94ad07782de7d",
+      "kind": "tar",
+      "tree_sha256": "4e8ddb6f27c4fd2a1becb9a489f2b61dd79033e3d52c7bc922a6fe3f6c2fbc66"
+    },
+    "chromium/third_party/crabbyavif/src": {
+      "url": "https://chromium.googlesource.com/external/github.com/webmproject/CrabbyAvif/+archive/d25069779cc7258d5f8816d3ca175d463b0b6444.tar.gz",
+      "sha256": "018f7d2008458ebd9034ce1101d7d9608bb3ea9e8f08c7d016dbef674443fec5",
+      "kind": "tar",
+      "tree_sha256": "c64c44c41ff0b0fd577de4637b5e462b63de42f67a9fb20250d7d2c7dd6f66cd"
+    },
+    "chromium/third_party/crc32c/src": {
+      "url": "https://chromium.googlesource.com/external/github.com/google/crc32c.git/+archive/2bbb3be42e20a0e6c0f7b39dc07dc863d9ffbc07.tar.gz",
+      "sha256": "a27d848fa2ab4a0de476d68ae2effc674ca53b91248108385386a4889ffdfadd",
+      "kind": "tar",
+      "tree_sha256": "a145ec7b9cfdf720851a6727931b779753df07e95bccedc72edf85a3df77a470"
+    },
+    "chromium/third_party/dav1d/libdav1d": {
+      "url": "https://chromium.googlesource.com/external/github.com/videolan/dav1d/+archive/bf5a8792744ee78c977dfb16503f9156dde6401d.tar.gz",
+      "sha256": "c7fba58ccd23ebdfde546771ec539b7fef5741a94f7a54a4ed5a6117571a4fac",
+      "kind": "tar",
+      "tree_sha256": "0c244804e62d49587d783e20675c3778616be3890cd471742bbbd5a5880d83f9"
+    },
+    "chromium/third_party/dawn": {
+      "url": "https://dawn.googlesource.com/dawn/+archive/8ce9806ee580b750c420d7ccd2d192d127c563bb.tar.gz",
+      "sha256": "15077897797bfafa2657037f6809436a76e86fdf5efa21fb8d513b9365f87593",
+      "kind": "tar",
+      "tree_sha256": "3ae2076607619b1742af2a5b1d0a7fd8becf9b009d82842f6b1d716cf0418aea"
+    },
+    "chromium/third_party/dawn/third_party/OpenGL-Registry/src": {
+      "url": "https://chromium.googlesource.com/external/github.com/KhronosGroup/OpenGL-Registry/+archive/1cdd228e34966dd6b95bd203e9f84faba0f371a1.tar.gz",
+      "sha256": "e12aa8c31f7aef582af4852f30de4f3b5eba2cb2b4ed920de04ca0c9711aed01",
+      "kind": "tar",
+      "tree_sha256": "d042f929a58e679087479149204f655166fb83a494b8dec7d0f699854f5eec40"
+    },
+    "chromium/third_party/dawn/tools/golang/linux-amd64": {
+      "url": "https://go.dev/dl/go1.26.6.linux-amd64.tar.gz",
+      "sha256": "708effb774be8237570d0add163225abbdfaf4fca28b2611df167beba4feef89",
+      "kind": "tar",
+      "strip": 1
+    },
+    "chromium/third_party/depot_tools": {
+      "url": "https://chromium.googlesource.com/chromium/tools/depot_tools/+archive/a07c06fe67a1a9d64ac4728df3a11c1ceb0cf73e.tar.gz",
+      "sha256": "67ee53f6ce6b8ba00bc1efb8f439577a88127ccbc56d06d4197dcdbb545f2e36",
+      "kind": "tar",
+      "tree_sha256": "24f9e8837cd31249611776d5d79b0409f3f7ac50257e99249c46cc0aba36103b"
+    },
+    "chromium/third_party/devtools-frontend/src": {
+      "url": "https://chromium.googlesource.com/devtools/devtools-frontend/+archive/904b77f9fcadfba90bc2d34e370ffeac1e9603d5.tar.gz",
+      "sha256": "0f14faf8bb0c9dbc8d05bf163bf3318650e0c1785c0a92327a92e223bcb151d8",
+      "kind": "tar",
+      "tree_sha256": "1aeff0fbb2916720543f715eece3c9aeeff6c8b15883834b1c910cdfe3278fc5"
+    },
+    "chromium/third_party/devtools-frontend/src/third_party/esbuild": {
+      "url": "https://chrome-infra-packages.appspot.com/dl/infra/3pp/tools/esbuild/linux-amd64/+/eEAFxhoy5UwDUUQ06V4AgWrSk_2viL1S97O8kWGDvQgC",
+      "sha256": "784005c61a32e54c03514434e95e00816ad293fdaf88bd52f7b3bc916183bd08",
+      "kind": "zip",
+      "members": [
+        "esbuild"
+      ]
+    },
+    "chromium/third_party/dom_distiller_js/dist": {
+      "url": "https://chromium.googlesource.com/chromium/dom-distiller/dist.git/+archive/015cda307cf81e293889c0887cffff4f0aa090ce.tar.gz",
+      "sha256": "e846e862d182cecba6dcdab590b1e3f967c19ad4867d654cf4fd5289538eda8a",
+      "kind": "tar",
+      "tree_sha256": "2f847bf429087954852b92c4666c679373b6955af03dc4c9383fe2475a0a7d4b"
+    },
+    "chromium/third_party/dragonbox/src": {
+      "url": "https://codeload.github.com/jk-jeon/dragonbox/tar.gz/beeeef91cf6fef89a4d4ba5e95d47ca64ccb3a44",
+      "sha256": "2646de322a13cdabeeff52863665a492adbd68242c66b5279a5cfefbaa301e39",
+      "kind": "tar",
+      "strip": 1
+    },
+    "chromium/third_party/eigen3/src": {
+      "url": "https://chromium.googlesource.com/external/gitlab.com/libeigen/eigen.git/+archive/04bfe22876d3bab4260f39491cce7a8df17daa40.tar.gz",
+      "sha256": "884e09c7529a13ecbd687052d450d557f98c5b282f95c901f0db4409ef71a6fa",
+      "kind": "tar",
+      "tree_sha256": "6aeacdf5b69ac6c72ebf1bcf2ac617e7fd47ddceb6fac69d1a51377774559622"
+    },
+    "chromium/third_party/emoji-segmenter/src": {
+      "url": "https://codeload.github.com/googlei18n/emoji-segmenter/tar.gz/955936be8b391e00835257059607d7c5b72ce744",
+      "sha256": "fc840a210627deba85b4515a6051d722a2f1cc0f742a1cb714a72caa402336c8",
+      "kind": "tar",
+      "strip": 1
+    },
+    "chromium/third_party/expat/src": {
+      "url": "https://chromium.googlesource.com/external/github.com/libexpat/libexpat.git/+archive/a851869e111c06fbcdc89edf639abf5fc2b6deba.tar.gz",
+      "sha256": "2acb0454bce11bc6b32e825d160077698f80cd613fda46a1474b928d368d7f69",
+      "kind": "tar",
+      "tree_sha256": "0da507e7034c3bf95cd65c1709c931088374bcd7bb12e0cfa57e8f2f5f0b4b92"
+    },
+    "chromium/third_party/farmhash/src": {
+      "url": "https://chromium.googlesource.com/external/github.com/google/farmhash.git/+archive/9d99331eb762e9ee22fd97d15a594525ad98310a.tar.gz",
+      "sha256": "006accbba90167d702557b1fa9584a6ef196ea8d00e5dd6e166476843f5312af",
+      "kind": "tar",
+      "tree_sha256": "318253b2c40ac6f1f67b4a171e3e80ce61914dd9d6d013bb31aa2c0daec3eb20"
+    },
+    "chromium/third_party/fast_float/src": {
+      "url": "https://codeload.github.com/fastfloat/fast_float/tar.gz/b0ab987b3dfdde13fa1915f65ef2a5c068d9208c",
+      "sha256": "3abf993dc066593bdef1b046da615338c70ff563e3640fda8cf1c22ba185d364",
+      "kind": "tar",
+      "strip": 1
+    },
+    "chromium/third_party/federated_compute/src": {
+      "url": "https://chromium.googlesource.com/external/github.com/google-parfait/federated-compute.git/+archive/f5241fb459426f88af484a909927044a71306209.tar.gz",
+      "sha256": "5972711ff478b5fb320df4a4ba72c4ee7956b613c4de2fc705072bafa7f913f8",
+      "kind": "tar",
+      "tree_sha256": "869fe6888cabcb58ab1eeb17a1d75c87e5f8cafd9fb12923f5f985de61d7bf01"
+    },
+    "chromium/third_party/ffmpeg": {
+      "url": "https://chromium.googlesource.com/chromium/third_party/ffmpeg/+archive/9db86ce5b5b454dfc96c435f9f0723012980c37f.tar.gz",
+      "sha256": "5e04709acc9812e60267f43e7320b8d8c45fa5dfa7dc5aad4b209c73d9bbb230",
+      "kind": "tar",
+      "tree_sha256": "0b56ef100d99f58a7c6d8f05906fabcdbabbded1df54c1a2f10d3c34e74c98af"
+    },
+    "chromium/third_party/flac": {
+      "url": "https://chromium.googlesource.com/chromium/deps/flac/+archive/e7108e2ed031547c3759217819a032065c820d73.tar.gz",
+      "sha256": "bd2a6a940a0f0587d601116dd1cd98f2312b21b86ddfe5135045da55d44eeb76",
+      "kind": "tar",
+      "tree_sha256": "dacd556bf07d11f9fdff53cbd19af5528f46040d9d1e585909abc5cc46c60818"
+    },
+    "chromium/third_party/flatbuffers/src": {
+      "url": "https://chromium.googlesource.com/external/github.com/google/flatbuffers/+archive/a86afae9399bbe631d1ea0783f8816e780e236cc.tar.gz",
+      "sha256": "549994275c5339b7a2ecc987cbda22425a89d12f7c64ba24e27d40629cf55c17",
+      "kind": "tar",
+      "tree_sha256": "edcd9adee88e7481e88de7af50f5f8e840b8dd69718d307ffcd611dac434b7c6"
+    },
+    "chromium/third_party/fp16/src": {
+      "url": "https://codeload.github.com/Maratyszcza/FP16/tar.gz/782eea126dc5c755827be751a099eb01826175cf",
+      "sha256": "6ca2e8bdb337c80984a3fa2d4900e6957bba4f2a1c15e7a40cc74dce38040741",
+      "kind": "tar",
+      "strip": 1
+    },
+    "chromium/third_party/fxdiv/src": {
+      "url": "https://codeload.github.com/Maratyszcza/FXdiv/tar.gz/63058eff77e11aa15bf531df5dd34395ec3017c8",
+      "sha256": "ec74d882a0a47cfd9c0f95bc4fae9901a4ade802a96a3b76e02671bb7340a4c5",
+      "kind": "tar",
+      "strip": 1
+    },
+    "chromium/third_party/gemmlowp/src": {
+      "url": "https://codeload.github.com/google/gemmlowp/tar.gz/16e8662c34917be0065110bfcd9cc27d30f52fdf",
+      "sha256": "c3feb896a1b42595cf9a508ed64ed0dc3cd84fffdb8eed790d02d0534ab322ce",
+      "kind": "tar",
+      "strip": 1
+    },
+    "chromium/third_party/glslang/src": {
+      "url": "https://chromium.googlesource.com/external/github.com/KhronosGroup/glslang/+archive/2ff6f609379ce43c4291c732cf6a19dd2461a680.tar.gz",
+      "sha256": "903262fb7f442454ea1ebfee4fea242bd272d1e2f7e165ff4bffbe5bc970d603",
+      "kind": "tar",
+      "tree_sha256": "5cf8c21ece81627b8e15b775fa91523849c18f6a4f1a93e492b0fd58cc1f4ae1"
+    },
+    "chromium/third_party/googletest/src": {
+      "url": "https://chromium.googlesource.com/external/github.com/google/googletest.git/+archive/4fe3307fb2d9f86d19777c7eb0e4809e9694dde7.tar.gz",
+      "sha256": "cb09414dcda397b64101d5dd7a8b75d6ec0a10e3b02c70cb7575cae684573343",
+      "kind": "tar",
+      "tree_sha256": "d8c7d4009e4f1cac8265bb8799c30684fa082a08ff1aa379ae005dc2e4b6cde6"
+    },
+    "chromium/third_party/gperf/cipd": {
+      "url": "https://chrome-infra-packages.appspot.com/dl/infra/3pp/tools/gperf/linux-amd64/+/otrRUeHQr9zlxtT4sJfSJqspytBWr9IkPrhZ8bFolnYC",
+      "sha256": "a2dad151e1d0afdce5c6d4f8b097d226ab29cad056afd2243eb859f1b1689676",
+      "kind": "zip",
+      "members": [
+        "bin/gperf"
+      ]
+    },
+    "chromium/third_party/harfbuzz/src": {
+      "url": "https://chromium.googlesource.com/external/github.com/harfbuzz/harfbuzz/+archive/f5efbbef3841bdcdc6427bde7c2971f62ac8c8f1.tar.gz",
+      "sha256": "c0c67f8a8422e63a90342d760562e1fa4e222dfecf47b71350e3c4e1bc3e0ed0",
+      "kind": "tar",
+      "tree_sha256": "8c1c2b845c6d59a906e901cbe3a27d7e8831b336cb2b061cda572bbd8688b0fb"
+    },
+    "chromium/third_party/highway/src": {
+      "url": "https://chromium.googlesource.com/external/github.com/google/highway.git/+archive/2607d3b5b0113992fe84d3848859eae13b3b52c1.tar.gz",
+      "sha256": "4a16778a8976ea815e155e9a8138e099c032b38ae47f2b0083b35cef04e19146",
+      "kind": "tar",
+      "tree_sha256": "a56613cab7bdf50ccf0c4865acbf8a23ee72cb94c3c8edd2cc819faa868ae45c"
+    },
+    "chromium/third_party/icu": {
+      "url": "https://chromium.googlesource.com/chromium/deps/icu/+archive/2a51536dfb3b448bdf3dae70c782ea2879c90904.tar.gz",
+      "sha256": "52085b83b9eefa5dc2120a59432b500167638c1103662a855f34eae611f4effc",
+      "kind": "tar",
+      "tree_sha256": "2bca0cb85500c9de9ad0bf157516a92140dc17f9ad7240d90a33ac55887b6a55"
+    },
+    "chromium/third_party/kotlin_stdlib/cipd": {
+      "url": "https://chrome-infra-packages.appspot.com/dl/chromium/third_party/kotlin_stdlib/+/3nV_Q9kDGjtGirTcLT-4xFZ6vNG6ar9HNSkDQUEC7h8C",
+      "sha256": "de757f43d9031a3b468ab4dc2d3fb8c4567abcd1ba6abf47352903414102ee1f",
+      "kind": "zip",
+      "members": [
+        "kotlin-stdlib-jdk8.jar"
+      ]
+    },
+    "chromium/third_party/kotlinc/current": {
+      "url": "https://chrome-infra-packages.appspot.com/dl/chromium/third_party/kotlinc/+/R1b_2VmAdxUjLeGb_lDhzK_ytUCBeWaGnCjwzsbgr6MC",
+      "sha256": "4756ffd959807715232de19bfe50e1ccaff2b540817966869c28f0cec6e0afa3",
+      "kind": "zip",
+      "members": [
+        "bin/kotlinc",
+        "build.txt",
+        "lib/annotations-13.0.jar",
+        "lib/jvm-abi-gen.jar",
+        "lib/kotlin-compiler.jar",
+        "lib/kotlin-preloader.jar",
+        "lib/kotlin-reflect.jar",
+        "lib/kotlin-script-runtime.jar",
+        "lib/kotlin-scripting-common.jar",
+        "lib/kotlin-scripting-compiler-impl.jar",
+        "lib/kotlin-scripting-compiler.jar",
+        "lib/kotlin-scripting-jvm.jar",
+        "lib/kotlin-stdlib.jar",
+        "lib/kotlinx-coroutines-core-jvm.jar",
+        "license/COPYRIGHT.txt",
+        "license/LICENSE.txt",
+        "license/NOTICE.txt",
+        "license/README.md"
+      ]
+    },
+    "chromium/third_party/leveldatabase/src": {
+      "url": "https://chromium.googlesource.com/external/leveldb.git/+archive/7ee830d02b623e8ffe0b95d59a74db1e58da04c5.tar.gz",
+      "sha256": "d4663f0f273c91ee3c03d564a6e80da444ca7916888d45714b8437574c96e4e9",
+      "kind": "tar",
+      "tree_sha256": "c02e24b2c069df7772cafc7183e37cb05a01ca115ce44c931d0c22f7b258f649"
+    },
+    "chromium/third_party/libaddressinput/src": {
+      "url": "https://chromium.googlesource.com/external/libaddressinput/+archive/81eb9628382b07d371d8ea0b11badf7de3857fd5.tar.gz",
+      "sha256": "c2c67f3659795e4f4a250f104f0870a1b7368fabc7476ce25af8f1b7b0c029eb",
+      "kind": "tar",
+      "tree_sha256": "a63b6773eb8afa46ab42795ee29ab2cad701574a0af0b166e3d487e8d39c8aa6"
+    },
+    "chromium/third_party/libaom/source/libaom": {
+      "url": "https://aomedia.googlesource.com/aom/+archive/016144ea8b8b84b9cfa1c3fba56227b2d3471229.tar.gz",
+      "sha256": "45e7c299855505dd229a3f0abb00a4915bb19dbc98932d0085d4adaafd8d2cd3",
+      "kind": "tar",
+      "tree_sha256": "9216f41d9de09370a8488bcebfd474c71524cd1a1881d763121a56fe819c67ab"
+    },
+    "chromium/third_party/libc++/src": {
+      "url": "https://chromium.googlesource.com/external/github.com/llvm/llvm-project/libcxx/+archive/97b436da4c33663581d394f4ee0a5977fc38c2f4.tar.gz",
+      "sha256": "8f59164ebb004d4d2763d01da19af5698c1f5424521bff74479a40a403096575",
+      "kind": "tar",
+      "tree_sha256": "2132917f2d172c0f50b939de4afec1ccdaa29895a01c667d5066b069fd948686"
+    },
+    "chromium/third_party/libc++abi/src": {
+      "url": "https://chromium.googlesource.com/external/github.com/llvm/llvm-project/libcxxabi/+archive/127292c11d332549ba1e0aebcece6d4c91de9239.tar.gz",
+      "sha256": "4fb2b86e2f6934c7f802ad206597264efe1faa33aa34265fde527e927ea0df06",
+      "kind": "tar",
+      "tree_sha256": "d70ee3a07d6c8f385c29d958b02b0e1dc4ebeb8bb272d76b22039e6f40344ae9"
+    },
+    "chromium/third_party/libgav1/src": {
+      "url": "https://chromium.googlesource.com/codecs/libgav1.git/+archive/085032331f60c10055d32ab52932bd7bd77e6f53.tar.gz",
+      "sha256": "2bc0b8bbf1a2b837ab51d8443ff65bdee9d81a5e7c8abff98ab98c4939796a41",
+      "kind": "tar",
+      "tree_sha256": "ff009e8118d9c25e02b7bfb3743e0af1d0c4484c447df095dba51f0ac7f6f352"
+    },
+    "chromium/third_party/libjpeg_turbo": {
+      "url": "https://chromium.googlesource.com/chromium/deps/libjpeg_turbo/+archive/640f254ad0fa03f6b1f29f89b7dd9366f2f6e533.tar.gz",
+      "sha256": "0d074f63ce5d9ab4ac8b8b14f00fa4cb6935a7f80785dd503dbd7d5aa1eb7886",
+      "kind": "tar",
+      "tree_sha256": "767a56ef67c8cbfbb7ef1700b2b5f0e1ac91c0eadebdd1c9cbd72dc61e55b73f"
+    },
+    "chromium/third_party/libphonenumber/src": {
+      "url": "https://chromium.googlesource.com/external/libphonenumber.git/+archive/0ae309f1940227efe688f5eb1815ef45a6fbee8d.tar.gz",
+      "sha256": "491a46f88789fd747de0ab031db31c03e4a0af5e3bfa21cfd7b1f7ebf9431e2c",
+      "kind": "tar",
+      "tree_sha256": "57ae2ab9ae2b8c6f9622655e689041a4fd1881362b07dab056544ca8db22ba8a"
+    },
+    "chromium/third_party/libsrtp": {
+      "url": "https://chromium.googlesource.com/chromium/deps/libsrtp/+archive/cd5d177bf1fde755ddb4c7f0d9ff7693f8b49e5e.tar.gz",
+      "sha256": "7ef87c925aa03a429b5c6ea71732a646e490f89c7b8e4e6d0615ea27e73a2ebd",
+      "kind": "tar",
+      "tree_sha256": "75e4ed725cef677a487d2c5f78e970cba8547f82128668fbe7927dcb641f524c"
+    },
+    "chromium/third_party/libsync/src": {
+      "url": "https://chromium.googlesource.com/aosp/platform/system/core/libsync.git/+archive/074e053f159602aa7558cfb2ae2f3c67878d90e0.tar.gz",
+      "sha256": "2a5ad184dd91e5f9ba84061633488654ff20315494475ad0e808ee4b8c501fee",
+      "kind": "tar",
+      "tree_sha256": "a992dcb4c1097282dc48dc8b5d0914162887d1d6d88cb376e079e57641ec212b"
+    },
+    "chromium/third_party/libunwind/src": {
+      "url": "https://chromium.googlesource.com/external/github.com/llvm/llvm-project/libunwind/+archive/8d41badfccd4bc7dfd17817f65217f2868d69be8.tar.gz",
+      "sha256": "b88718f1338075b5df1b5a65a071ac68791fd15dcc208d91ddfcb63e5b2fe7bb",
+      "kind": "tar",
+      "tree_sha256": "46fa10c2f35638eb1bf0903c24c87536b71b13e42e89d358c6f316815e5f2793"
+    },
+    "chromium/third_party/libunwindstack": {
+      "url": "https://chromium.googlesource.com/chromium/src/third_party/libunwindstack/+archive/333fcafb91bd3830c5ef814c071ff73df9cdc976.tar.gz",
+      "sha256": "8dc762937e862666d4da83f90d355d2dea6a9c574bbfb6f5ad36ca29e24fc9ef",
+      "kind": "tar",
+      "tree_sha256": "027a8e7a1431dff664cd60b0e31bf695a0a578a14a0d67e530af29f3f6a33d73"
+    },
+    "chromium/third_party/libvpx/source/libvpx": {
+      "url": "https://chromium.googlesource.com/webm/libvpx/+archive/de61454cf81594d5927899da122fc53dcc4a846e.tar.gz",
+      "sha256": "e339c7429d110fabedf14138697f111ac7db10107e91bf3ed7d084cd304978ef",
+      "kind": "tar",
+      "tree_sha256": "de1f394845101a8d7e8c51ff061c0e3ac113a0b649acbf6962839c3e09aa30a9"
+    },
+    "chromium/third_party/libwebm/source": {
+      "url": "https://chromium.googlesource.com/webm/libwebm.git/+archive/6184f4484a826724b5293837134ab9492261b941.tar.gz",
+      "sha256": "dd506fcfec66112e71863c6b1c3cf8e2cf4339166efb7a886a76e4468f734591",
+      "kind": "tar",
+      "tree_sha256": "9171a289d36b17635fa7e54d1b91f8ef0aff975f6eac4d8ae75fafdd551e367c"
+    },
+    "chromium/third_party/libwebp/src": {
+      "url": "https://chromium.googlesource.com/webm/libwebp/+archive/b43b2caa710c0c997c066cb32c7fea1391fad70a.tar.gz",
+      "sha256": "d5253e5a0f8dd31286ee3cabfa71224dc134439e31cc36c62cd04515d98e83d4",
+      "kind": "tar",
+      "tree_sha256": "c9395eb118821ef6e4fa37de6abd90ba72e411de7c30dec0dfe0353ca3ef42a0"
+    },
+    "chromium/third_party/libyuv": {
+      "url": "https://chromium.googlesource.com/libyuv/libyuv/+archive/f1c9b5898619f2ced836030c023249f5a8b189d1.tar.gz",
+      "sha256": "ee7dd1e62820bb0e4dd4d91e569f5b49ff15059e8f7a0fc73a5d476cca40bad0",
+      "kind": "tar",
+      "tree_sha256": "9fbfc470259dc6cc7a900bab1ff045be8996b272ea06d3bfe6092d2c77db39f2"
+    },
+    "chromium/third_party/litert/src": {
+      "url": "https://chromium.googlesource.com/external/github.com/google-ai-edge/LiteRT/+archive/4dac1538b76bc20bb7f2ba314bcc89dc57c0ee2b.tar.gz",
+      "sha256": "7e5d11970530852f8a375fc3df3937a322cad2714e616e728d0bcfa4f6b9d1c1",
+      "kind": "tar",
+      "tree_sha256": "275151964a9b87fffda417d971da9166cfc66e8a7b5f31006834912bc6783ec8"
+    },
+    "chromium/third_party/llvm-libc/src": {
+      "url": "https://chromium.googlesource.com/external/github.com/llvm/llvm-project/libc.git/+archive/b8b28272d32b75f0ee71acd2fa1144c8b5b95460.tar.gz",
+      "sha256": "843c45744afd7829bba26a2c5b73a4b08056640454d7f8328ec9ffb92bc39459",
+      "kind": "tar",
+      "tree_sha256": "45a8b2950d0b7143801c87774693cf486f72e8046c46111321f624a22bd78195"
+    },
+    "chromium/third_party/llvm-libclang": {
+      "url": "https://storage.googleapis.com/chromium-browser-clang/Linux_x64/rust-libclang-1edd55dcfcd573872c727fa3e086369a71661ee0-2-llvmorg-24-init-7747-g62397f8b.tar.xz?generation=1789143385954506",
+      "sha256": "59c2086dabf6494fb7cc4690910d4dfddd9a598a1ecaf19d8408197445bbf7c3",
+      "kind": "tar"
+    },
+    "chromium/third_party/lss": {
+      "url": "https://chromium.googlesource.com/linux-syscall-support/+archive/29164a80da4d41134950d76d55199ea33fbb9613.tar.gz",
+      "sha256": "24ebac557d183b546bc897c06fe9e2cb64b366073263be612fdc02f3d2f526f2",
+      "kind": "tar",
+      "tree_sha256": "dd38f4b83450b2f93fb82db24958539602aec43c979b98dbd30001511ce573c8"
+    },
+    "chromium/third_party/material_color_utilities/src": {
+      "url": "https://chromium.googlesource.com/external/github.com/material-foundation/material-color-utilities.git/+archive/5b3618b16fdc3825e21d5679bafd144662088ea1.tar.gz",
+      "sha256": "2a374f66270bc62e2ef7d69603d81cc57a49bd7a3c2634b42ddb71cc74929660",
+      "kind": "tar",
+      "tree_sha256": "557d2b69965299096d46a6229ddecc8742959c68ebb3338464d50b69d1490d36"
+    },
+    "chromium/third_party/nasm": {
+      "url": "https://chromium.googlesource.com/chromium/deps/nasm/+archive/525a09a813be0f75b646ee93fc2a31c27b87d722.tar.gz",
+      "sha256": "ecebe64528d70946c644ec335fb2474901e327cd24862ae59deb6fc11c1bf736",
+      "kind": "tar",
+      "tree_sha256": "6fe8a83b5754b8ded680a020064735e9aa6075818729b651ca82cf4f840d0ee5"
+    },
+    "chromium/third_party/neon_2_sse/src": {
+      "url": "https://codeload.github.com/intel/ARM_NEON_2_x86_SSE/tar.gz/183fc88bcb90dbfaefba33a292eae8a5ce94bd67",
+      "sha256": "49495500a61b06d0f5c82d1ed341582a139b8fb9b9c812a0b58983f9c7eb5594",
+      "kind": "tar",
+      "strip": 1
+    },
+    "chromium/third_party/node/linux": {
+      "url": "https://storage.googleapis.com/chromium-nodejs/744e6926ffdd4a4fb2080ae2b9ce4575490261e7?generation=1767604834866657",
+      "sha256": "bdea62a6857735d62165ec97242d79a693564c72d551890c4d009d2355abf14c",
+      "kind": "tar"
+    },
+    "chromium/third_party/oak/src/LICENSE": {
+      "url": "https://raw.githubusercontent.com/project-oak/oak/14031232cec7d3d454e89bbae36404d74abf18dc/LICENSE",
+      "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+      "kind": "file"
+    },
+    "chromium/third_party/openscreen/src": {
+      "url": "https://chromium.googlesource.com/openscreen/+archive/a515d3a249e7411fa251a27125815a06a2d73862.tar.gz",
+      "sha256": "e95c6a3ddc27a02ce3c9a445b5dcd7011f070593e695e08f584d769ee2f25ede",
+      "kind": "tar",
+      "tree_sha256": "9fc08f1d95c3db93430be7a5fe526a615c207b288be406a9092c245300536979"
+    },
+    "chromium/third_party/ots/src": {
+      "url": "https://chromium.googlesource.com/external/github.com/khaledhosny/ots.git/+archive/46bea9879127d0ff1c6601b078e2ce98e83fcd33.tar.gz",
+      "sha256": "114092d98072d8d0ea9effc25514d1a88b7789e457d8521521eaf942cd03d1cd",
+      "kind": "tar",
+      "tree_sha256": "d9ea9587d56f6db46c48d75b84e11014d5b39f392eabebbb8776ff09c26730ec"
+    },
+    "chromium/third_party/pdfium": {
+      "url": "https://pdfium.googlesource.com/pdfium/+archive/c97f02a3519c99d5969514970fd8186318cdb2b0.tar.gz",
+      "sha256": "996e29b57471e65c6c563673b1f4a857252a20c816e793132d8b32187f08c3b1",
+      "kind": "tar",
+      "tree_sha256": "95301e52a9b11b96c4aaa12efc8dbf722791c7aa1912405df72326c211521b5a"
+    },
+    "chromium/third_party/perfetto": {
+      "url": "https://chromium.googlesource.com/external/github.com/google/perfetto/+archive/403906f4adfbf287a02e5546f8430dcc9d56b649.tar.gz",
+      "sha256": "a2a91540f00cc58f731a220d81b8ca1bfa2b2c252e90851b8cca8077df4aea47",
+      "kind": "tar",
+      "tree_sha256": "fbfad4f2a448221d6df1279fc7e6c4444db039f05312916480ce33650d1990bf"
+    },
+    "chromium/third_party/protobuf-javascript/src": {
+      "url": "https://chromium.googlesource.com/external/github.com/protocolbuffers/protobuf-javascript/+archive/e6d763860001ba1a76a63adcff5efb12b1c96024.tar.gz",
+      "sha256": "d45aa1bf86b5e3f0f0003eb1c4e97b47527b6143ad4bf9cb0dca114cac1036b4",
+      "kind": "tar",
+      "tree_sha256": "74ef8318f142cfbed1fd54c3aa2cfbdb8abbca0b552c34c5085e16932222932d"
+    },
+    "chromium/third_party/pthreadpool/src": {
+      "url": "https://chromium.googlesource.com/external/github.com/google/pthreadpool.git/+archive/15a6644ba1c45f1acc16ac1e883efc3e56c6bed2.tar.gz",
+      "sha256": "6b2432d7fba6a64657ec3fb0d44547a1c2d1b164ebb7404e4c7c2bc30a01548f",
+      "kind": "tar",
+      "tree_sha256": "54201055ced1d89ba0c4cfd1374d789b6ac038ec5399667102a48fdf4be445a4"
+    },
+    "chromium/third_party/r8/cipd": {
+      "url": "https://chrome-infra-packages.appspot.com/dl/chromium/third_party/r8/+/kzCVQZYn5qKR-4wEJ9__4yrIWrCS9VFv8kPharQ-WMgC",
+      "sha256": "933095419627e6a291fb8c0427dfffe32ac85ab092f5516ff243e16ab43e58c8",
+      "kind": "zip",
+      "members": [
+        "lib/r8.jar"
+      ]
+    },
+    "chromium/third_party/r8/d8/cipd": {
+      "url": "https://chrome-infra-packages.appspot.com/dl/chromium/third_party/r8/+/IftCs1-T5uV7FcoEpDBQyEzPJr0DguIcmwK2BrNjsMYC",
+      "sha256": "21fb42b35f93e6e57b15ca04a43050c84ccf26bd0382e21c9b02b606b363b0c6",
+      "kind": "zip",
+      "members": [
+        "lib/r8.jar"
+      ]
+    },
+    "chromium/third_party/re2/src": {
+      "url": "https://chromium.googlesource.com/external/github.com/google/re2/+archive/972a15cedd008d846f1a39b2e88ce48d7f166cbd.tar.gz",
+      "sha256": "effe1602c8b5ac3c0ba5ad7eb347ddce1bedf58dd60b7ff2ffa40c0c1156df09",
+      "kind": "tar",
+      "tree_sha256": "c5a37d68cb2a22a6856670fe4efda00d3aa02fa5e386ebd32b7201889dd65c88"
+    },
+    "chromium/third_party/rust-toolchain": {
+      "url": "https://storage.googleapis.com/chromium-browser-clang/Linux_x64/rust-toolchain-1edd55dcfcd573872c727fa3e086369a71661ee0-2-llvmorg-24-init-7747-g62397f8b.tar.xz?generation=1789143384016025",
+      "sha256": "5a56edc35db24efbbe0373c724457c31a1febd75cbef6ac7fc9a1c5bca6fc697",
+      "kind": "tar"
+    },
+    "chromium/third_party/ruy/src": {
+      "url": "https://chromium.googlesource.com/external/github.com/google/ruy.git/+archive/2264753777198e4393fb83c44c693462d57a2be1.tar.gz",
+      "sha256": "e29100e7ed6e40c86bb23be59fee6806251d28c76658a08c8be6284b109ebf7c",
+      "kind": "tar",
+      "tree_sha256": "49539404fc4049331d69c37143b1e5e8d1a233acd66eff08c6cfbce469900d3c"
+    },
+    "chromium/third_party/search_engines_data/resources": {
+      "url": "https://chromium.googlesource.com/external/search_engines_data.git/+archive/5dc9f1afd38a8ac2b26b1972eb4fc1bbd5754e8c.tar.gz",
+      "sha256": "0f27768ea7e4ac1ab516e46bbcc75f081816128a495d3bacc2a87aa4f0099668",
+      "kind": "tar",
+      "tree_sha256": "4f59f0cd730053f871c1be5ad703229d8d1da5c5b04dbeecc42171c3c456990f"
+    },
+    "chromium/third_party/skia": {
+      "url": "https://skia.googlesource.com/skia/+archive/01c8c057881f90924adfb2eddb05609151f3d66a.tar.gz",
+      "sha256": "8daaf544a7a156980515da4eab2751c13d944578ea043c122f8db6ed01be48fd",
+      "kind": "tar",
+      "tree_sha256": "af1721f5dc2d111829e0f4c5ac46ab54d612e5e45200566e595ca63f36953c0c"
+    },
+    "chromium/third_party/smhasher/src": {
+      "url": "https://chromium.googlesource.com/external/smhasher.git/+archive/07bb4de10a63e8cc2e1724865454eba635742383.tar.gz",
+      "sha256": "2630949d6f552ba1f78de464b212ded9d012dd64e2ccbfbc3ab5b2d53dbd31a0",
+      "kind": "tar",
+      "tree_sha256": "03dd4b8fd33ed9b9713fb53c08d9b8a582f418b9be4107ccdab2fd2c118d0ba5"
+    },
+    "chromium/third_party/snappy/src": {
+      "url": "https://chromium.googlesource.com/external/github.com/google/snappy.git/+archive/32ded457c0b1fe78ceb8397632c416568d6714a0.tar.gz",
+      "sha256": "bac1b03e339caf799f691b23062e1db9452c2b8a0d8cd1fb78039a5535c291f5",
+      "kind": "tar",
+      "tree_sha256": "c5c73453b947219d026f987bd9fb3667911bcba4f78c70c9190c191bdb902b90"
+    },
+    "chromium/third_party/spirv-headers/src": {
+      "url": "https://chromium.googlesource.com/external/github.com/KhronosGroup/SPIRV-Headers/+archive/cb42dec3830d3ac67fa449ecdc0c0f73d5e74498.tar.gz",
+      "sha256": "62a20f5fc4dfb22f17d5d048c456245c51dd62b1ee4b98063c9d5ff22c484c18",
+      "kind": "tar",
+      "tree_sha256": "6e6b2bc09ed86e297bbe9692980323dc7b9853a2c38a0349a4ceafab175282cc"
+    },
+    "chromium/third_party/spirv-tools/src": {
+      "url": "https://chromium.googlesource.com/external/github.com/KhronosGroup/SPIRV-Tools/+archive/1d0401cd2b68ae34cda9ff625bedd1be4ed6214a.tar.gz",
+      "sha256": "e1406ef3673659fa388999d1ca11bc5d2e03fb0b01b71485a97de4983cfc54d5",
+      "kind": "tar",
+      "tree_sha256": "e273095eeb40063ea8971cdfa862712c38d14bae8065d323347b806b989612b8"
+    },
+    "chromium/third_party/sqlite/src": {
+      "url": "https://chromium.googlesource.com/chromium/deps/sqlite.git/+archive/ba8c54c83337618a9f15dd368a267e46b672fc84.tar.gz",
+      "sha256": "abe9ad81631735c715ae7c2bc3f2b54a0d449a349865bd3b69285362ec16b2c5",
+      "kind": "tar",
+      "tree_sha256": "8c80b7fc443067e03a62fc7f1e3a9b719aef68a1b2925feadb480e513f0910c3"
+    },
+    "chromium/third_party/swiftshader": {
+      "url": "https://swiftshader.googlesource.com/SwiftShader/+archive/1e80438d2b93ef36a7c05f8d2b81233bac0e3d16.tar.gz",
+      "sha256": "a177a2d979792447e239331c33f50f3b9d65ea0fe920f6d3b4f1c3dcb5809af8",
+      "kind": "tar",
+      "tree_sha256": "21dfcebc643d71113e3383304075ace937d24730f9a38439120e9c2455522360"
+    },
+    "chromium/third_party/tflite/src": {
+      "url": "https://chromium.googlesource.com/external/github.com/tensorflow/tensorflow/+archive/9edd58f895c58c3db484a9e39ab2e953baca4bca.tar.gz",
+      "sha256": "6dea9c29833ee3c47b2eaf09fcaab0a56a0ade7b24d9de87a4844c693836a85f",
+      "kind": "tar",
+      "tree_sha256": "fab8ef6b0b8c2b402065d275867c81944b02eb541d9137ede3b9bc37d31a15a2"
+    },
+    "chromium/third_party/turbine/cipd": {
+      "url": "https://chrome-infra-packages.appspot.com/dl/chromium/third_party/turbine/+/boo7QDiTvCkA9jTkgPTGKoVxGDt-PV-OZkly6HHgE2wC",
+      "sha256": "6e8a3b403893bc2900f634e480f4c62a8571183b7e3d5f8e664972e871e0136c",
+      "kind": "zip",
+      "members": [
+        "turbine.jar"
+      ]
+    },
+    "chromium/third_party/typescript/linux-amd64/src": {
+      "url": "https://registry.npmjs.org/@typescript/typescript-linux-x64/-/typescript-linux-x64-7.0.2.tgz",
+      "sha256": "7ecad6f67377e831856367ab062ef394f21506a611405bf8ac0ff039348637d3",
+      "kind": "tar",
+      "strip": 1
+    },
+    "chromium/third_party/vulkan-headers/src": {
+      "url": "https://chromium.googlesource.com/external/github.com/KhronosGroup/Vulkan-Headers/+archive/3c65a01745e4a1134d32b9c2c456472212dba16d.tar.gz",
+      "sha256": "46e8d08f5bd7c2119699ffabbc7d48f746b90e53302ed1828aa12d7fc5db7ef6",
+      "kind": "tar",
+      "tree_sha256": "53803df53c29a428126ba85bce3be68b1209ca2a2ef0af473b94c0d053413a4c"
+    },
+    "chromium/third_party/vulkan-loader/src": {
+      "url": "https://chromium.googlesource.com/external/github.com/KhronosGroup/Vulkan-Loader/+archive/3270cf8a1349306f0ddee1b500ee2b0d552e1c82.tar.gz",
+      "sha256": "481c12167a431dab6c66857bbb35e1c33b40c60b74909ca2398998d02815385c",
+      "kind": "tar",
+      "tree_sha256": "c8c204a1bc686663c6bfa5dc710d172ac3c4ca6f95e87038d6be16046677266e"
+    },
+    "chromium/third_party/vulkan-tools/src": {
+      "url": "https://chromium.googlesource.com/external/github.com/KhronosGroup/Vulkan-Tools/+archive/69ca4d4b6590ab32e7a398725bfc90f81e6338e6.tar.gz",
+      "sha256": "7ceedb3d106209f7cc4bd8c81e9e50904375c40870e8608514ddd78da24c250b",
+      "kind": "tar",
+      "tree_sha256": "1ddf41f52bf98b68e3d7e5b4e8229f107f7689c67a771d0770e520111008ae67"
+    },
+    "chromium/third_party/vulkan-utility-libraries/src": {
+      "url": "https://chromium.googlesource.com/external/github.com/KhronosGroup/Vulkan-Utility-Libraries/+archive/666fdaa0f87b9d49ae576473227b4b4cf428ba7e.tar.gz",
+      "sha256": "39e3c56de7c5aaa33f9289ff363a47f1f4c16110011417faa0ca2013010eb54e",
+      "kind": "tar",
+      "tree_sha256": "139eee9349da2971c3b6eb0e0e54ae53acf4eb100cc30c72c3220c2054deff35"
+    },
+    "chromium/third_party/vulkan-validation-layers/src": {
+      "url": "https://chromium.googlesource.com/external/github.com/KhronosGroup/Vulkan-ValidationLayers/+archive/b0688753f1fc04a382ef0fd8c46ecb5a7c91486c.tar.gz",
+      "sha256": "5e592559591df6078e4001caa09b69b51c78243158bf5174535f289f200aa386",
+      "kind": "tar",
+      "tree_sha256": "2f73a0c666a81fed8294f70fb4a4b387c5c575c3a25e67d6dc4d3f6f67af2d2a"
+    },
+    "chromium/third_party/vulkan_memory_allocator": {
+      "url": "https://chromium.googlesource.com/external/github.com/GPUOpen-LibrariesAndSDKs/VulkanMemoryAllocator/+archive/82a9d47e4f9d91f0e32d2b6acd9714fcee1933a0.tar.gz",
+      "sha256": "9ca40956d9be2567f6f79c5c88c220e616b33e3c7197b698aa101b27c5f7d906",
+      "kind": "tar",
+      "tree_sha256": "c6aa0f29701d76fa12dae0d6c25828f5a89efd26badde027a7cbd85a55eadfa8"
+    },
+    "chromium/third_party/webrtc": {
+      "url": "https://webrtc.googlesource.com/src/+archive/19576e37870bfe5a0a910a32f98ff411f722f43a.tar.gz",
+      "sha256": "436ab8af37840e90f9471ca4dc752997b787a81ac1bac01828ef43dd5bd6ecc0",
+      "kind": "tar",
+      "tree_sha256": "ebf06960083a56a4fb03aa41672649f4dbcaf22c2f003f3dea9e754953d794f6"
+    },
+    "chromium/third_party/wuffs/src": {
+      "url": "https://skia.googlesource.com/external/github.com/google/wuffs-mirror-release-c.git/+archive/7411f488fe2e2c205c3d3b3d28638b7356522930.tar.gz",
+      "sha256": "6477435f3c57cc6fb0a6532b008f0990939747de943dc80e1c6c71963faf3135",
+      "kind": "tar",
+      "tree_sha256": "84f0bc66fb74a8dd17f831aed5cbeda489a2fd2a385249c0c9a5f224b1ab3954"
+    },
+    "chromium/third_party/xnnpack/src": {
+      "url": "https://chromium.googlesource.com/external/github.com/google/XNNPACK/+archive/b6d54fe94520ee6e1181ca1b402f71dbb5d50efa.tar.gz",
+      "sha256": "4a268a0dc7a8d13da80a2356b64f9c81c6da1e044cbc17f64c43482aa53f2287",
+      "kind": "tar",
+      "tree_sha256": "1d8b277035ef06f2ae82df00515ec9211203068296d773d4eaaaab3227c81fb7"
+    },
+    "chromium/third_party/zstd/src": {
+      "url": "https://chromium.googlesource.com/external/github.com/facebook/zstd/+archive/10da6ba6de05e29169261fa4b68eb99239f770dd.tar.gz",
+      "sha256": "e091186abc60e1827454e8accd82526f7881f9e4bb34592c35e59dee7eb88d17",
+      "kind": "tar",
+      "tree_sha256": "68ae74ae632babae94177b1166f888b7ded08c6242ba534361a92a388e319c12"
+    },
+    "chromium/v8": {
+      "url": "https://chromium.googlesource.com/v8/v8/+archive/19451970c7d747f1cf633fccfbdb082dcbcb733c.tar.gz",
+      "sha256": "6176201b6cb6267fd1bc990de17fdb6d8c3cde106ea456da40c9e8c4b67c6248",
+      "kind": "tar",
+      "tree_sha256": "f5a088bb43031c87a5be7fed9e83ab6dfed88c53455bfd38191209593f0924b4"
+    }
+  },
+  "node_packages": [
+    "node_modules/@aashutoshrathi/word-wrap",
+    "node_modules/@babel/code-frame",
+    "node_modules/@babel/helper-validator-identifier",
+    "node_modules/@bufbuild/protobuf",
+    "node_modules/@cacheable/memory",
+    "node_modules/@cacheable/memory/node_modules/@keyv/bigmap",
+    "node_modules/@cacheable/memory/node_modules/keyv",
+    "node_modules/@cacheable/utils",
+    "node_modules/@cacheable/utils/node_modules/keyv",
+    "node_modules/@csstools/css-parser-algorithms",
+    "node_modules/@csstools/css-syntax-patches-for-csstree",
+    "node_modules/@csstools/css-tokenizer",
+    "node_modules/@csstools/media-query-list-parser",
+    "node_modules/@eslint-community/eslint-utils",
+    "node_modules/@eslint-community/regexpp",
+    "node_modules/@eslint/config-array",
+    "node_modules/@eslint/config-helpers",
+    "node_modules/@eslint/core",
+    "node_modules/@eslint/object-schema",
+    "node_modules/@eslint/plugin-kit",
+    "node_modules/@humanfs/core",
+    "node_modules/@humanfs/node",
+    "node_modules/@humanfs/node/node_modules/@humanwhocodes/retry",
+    "node_modules/@humanwhocodes/module-importer",
+    "node_modules/@humanwhocodes/retry",
+    "node_modules/@jridgewell/gen-mapping",
+    "node_modules/@jridgewell/resolve-uri",
+    "node_modules/@jridgewell/set-array",
+    "node_modules/@jridgewell/source-map",
+    "node_modules/@jridgewell/sourcemap-codec",
+    "node_modules/@jridgewell/trace-mapping",
+    "node_modules/@keyv/serialize",
+    "node_modules/@lit/reactive-element",
+    "node_modules/@nodelib/fs.scandir",
+    "node_modules/@nodelib/fs.stat",
+    "node_modules/@nodelib/fs.walk",
+    "node_modules/@rollup/wasm-node",
+    "node_modules/@sindresorhus/merge-streams",
+    "node_modules/@stylistic/stylelint-plugin",
+    "node_modules/@stylistic/stylelint-plugin/node_modules/postcss",
+    "node_modules/@stylistic/stylelint-plugin/node_modules/postcss-selector-parser",
+    "node_modules/@types/dom-speech-recognition",
+    "node_modules/@types/esquery",
+    "node_modules/@types/esrecurse",
+    "node_modules/@types/json-schema",
+    "node_modules/@types/node",
+    "node_modules/@types/trusted-types",
+    "node_modules/@typescript-eslint/eslint-plugin",
+    "node_modules/@typescript-eslint/eslint-plugin/node_modules/ignore",
+    "node_modules/@typescript-eslint/parser",
+    "node_modules/@typescript-eslint/project-service",
+    "node_modules/@typescript-eslint/scope-manager",
+    "node_modules/@typescript-eslint/tsconfig-utils",
+    "node_modules/@typescript-eslint/type-utils",
+    "node_modules/@typescript-eslint/types",
+    "node_modules/@typescript-eslint/typescript-estree",
+    "node_modules/@typescript-eslint/utils",
+    "node_modules/@typescript-eslint/visitor-keys",
+    "node_modules/@typescript-eslint/visitor-keys/node_modules/eslint-visitor-keys",
+    "node_modules/acorn",
+    "node_modules/acorn-jsx",
+    "node_modules/ajv",
+    "node_modules/ansi-regex",
+    "node_modules/ansi-styles",
+    "node_modules/argparse",
+    "node_modules/astral-regex",
+    "node_modules/balanced-match",
+    "node_modules/brace-expansion",
+    "node_modules/braces",
+    "node_modules/buffer-from",
+    "node_modules/cacheable",
+    "node_modules/cacheable/node_modules/keyv",
+    "node_modules/callsites",
+    "node_modules/case-anything",
+    "node_modules/color-convert",
+    "node_modules/color-name",
+    "node_modules/colord",
+    "node_modules/commander",
+    "node_modules/cosmiconfig",
+    "node_modules/cross-spawn",
+    "node_modules/css-functions-list",
+    "node_modules/cssesc",
+    "node_modules/debug",
+    "node_modules/deep-is",
+    "node_modules/detect-libc",
+    "node_modules/dprint-node",
+    "node_modules/emoji-regex",
+    "node_modules/env-paths",
+    "node_modules/error-ex",
+    "node_modules/eslint",
+    "node_modules/eslint-plugin-lit",
+    "node_modules/eslint-scope",
+    "node_modules/eslint-visitor-keys",
+    "node_modules/eslint/node_modules/escape-string-regexp",
+    "node_modules/eslint/node_modules/eslint-visitor-keys",
+    "node_modules/eslint/node_modules/espree",
+    "node_modules/esquery",
+    "node_modules/esrecurse",
+    "node_modules/estraverse",
+    "node_modules/esutils",
+    "node_modules/fast-deep-equal",
+    "node_modules/fast-glob",
+    "node_modules/fast-glob/node_modules/glob-parent",
+    "node_modules/fast-json-stable-stringify",
+    "node_modules/fast-levenshtein",
+    "node_modules/fast-uri",
+    "node_modules/fastest-levenshtein",
+    "node_modules/fastq",
+    "node_modules/file-entry-cache",
+    "node_modules/fill-range",
+    "node_modules/find-up",
+    "node_modules/flat-cache",
+    "node_modules/flatted",
+    "node_modules/get-east-asian-width",
+    "node_modules/glob-parent",
+    "node_modules/global-modules",
+    "node_modules/global-prefix",
+    "node_modules/global-prefix/node_modules/which",
+    "node_modules/globby",
+    "node_modules/globby/node_modules/ignore",
+    "node_modules/globjoin",
+    "node_modules/hashery",
+    "node_modules/hookified",
+    "node_modules/html-tags",
+    "node_modules/ignore",
+    "node_modules/import-fresh",
+    "node_modules/import-meta-resolve",
+    "node_modules/imurmurhash",
+    "node_modules/ini",
+    "node_modules/is-arrayish",
+    "node_modules/is-extglob",
+    "node_modules/is-fullwidth-code-point",
+    "node_modules/is-glob",
+    "node_modules/is-number",
+    "node_modules/is-path-inside",
+    "node_modules/is-plain-object",
+    "node_modules/isexe",
+    "node_modules/js-tokens",
+    "node_modules/js-yaml",
+    "node_modules/json-buffer",
+    "node_modules/json-parse-even-better-errors",
+    "node_modules/json-schema-traverse",
+    "node_modules/json-stable-stringify-without-jsonify",
+    "node_modules/keyv",
+    "node_modules/kind-of",
+    "node_modules/known-css-properties",
+    "node_modules/levn",
+    "node_modules/lines-and-columns",
+    "node_modules/lit",
+    "node_modules/lit-element",
+    "node_modules/lit-html",
+    "node_modules/locate-path",
+    "node_modules/lodash.truncate",
+    "node_modules/mathml-tag-names",
+    "node_modules/meow",
+    "node_modules/merge2",
+    "node_modules/micromatch",
+    "node_modules/minimatch",
+    "node_modules/ms",
+    "node_modules/nanoid",
+    "node_modules/natural-compare",
+    "node_modules/normalize-path",
+    "node_modules/optionator",
+    "node_modules/p-limit",
+    "node_modules/p-locate",
+    "node_modules/parent-module",
+    "node_modules/parse-json",
+    "node_modules/parse5",
+    "node_modules/parse5-htmlparser2-tree-adapter",
+    "node_modules/path-exists",
+    "node_modules/path-key",
+    "node_modules/picocolors",
+    "node_modules/picomatch",
+    "node_modules/postcss",
+    "node_modules/postcss-minify",
+    "node_modules/postcss-safe-parser",
+    "node_modules/postcss-selector-parser",
+    "node_modules/postcss-value-parser",
+    "node_modules/prelude-ls",
+    "node_modules/punycode",
+    "node_modules/qified",
+    "node_modules/queue-microtask",
+    "node_modules/require-from-string",
+    "node_modules/resolve-from",
+    "node_modules/reusify",
+    "node_modules/run-parallel",
+    "node_modules/semver",
+    "node_modules/shebang-command",
+    "node_modules/shebang-regex",
+    "node_modules/signal-exit",
+    "node_modules/slash",
+    "node_modules/slice-ansi",
+    "node_modules/source-map-js",
+    "node_modules/source-map-support",
+    "node_modules/source-map-support/node_modules/source-map",
+    "node_modules/string-width",
+    "node_modules/strip-ansi",
+    "node_modules/style-search",
+    "node_modules/stylelint",
+    "node_modules/stylelint/node_modules/@csstools/selector-resolve-nested",
+    "node_modules/stylelint/node_modules/@csstools/selector-specificity",
+    "node_modules/stylelint/node_modules/ansi-regex",
+    "node_modules/stylelint/node_modules/balanced-match",
+    "node_modules/stylelint/node_modules/css-tree",
+    "node_modules/stylelint/node_modules/file-entry-cache",
+    "node_modules/stylelint/node_modules/flat-cache",
+    "node_modules/stylelint/node_modules/ignore",
+    "node_modules/stylelint/node_modules/mdn-data",
+    "node_modules/stylelint/node_modules/postcss",
+    "node_modules/stylelint/node_modules/postcss-selector-parser",
+    "node_modules/stylelint/node_modules/string-width",
+    "node_modules/stylelint/node_modules/strip-ansi",
+    "node_modules/supports-hyperlinks",
+    "node_modules/supports-hyperlinks/node_modules/has-flag",
+    "node_modules/supports-hyperlinks/node_modules/supports-color",
+    "node_modules/svg-tags",
+    "node_modules/table",
+    "node_modules/table/node_modules/ajv",
+    "node_modules/table/node_modules/json-schema-traverse",
+    "node_modules/terser",
+    "node_modules/tinyglobby",
+    "node_modules/tinyglobby/node_modules/fdir",
+    "node_modules/tinyglobby/node_modules/picomatch",
+    "node_modules/to-regex-range",
+    "node_modules/ts-api-utils",
+    "node_modules/ts-poet",
+    "node_modules/ts-proto",
+    "node_modules/ts-proto-descriptors",
+    "node_modules/type-check",
+    "node_modules/typescript",
+    "node_modules/undici-types",
+    "node_modules/unicorn-magic",
+    "node_modules/uri-js",
+    "node_modules/util-deprecate",
+    "node_modules/which",
+    "node_modules/write-file-atomic",
+    "node_modules/yocto-queue"
+  ]
+}

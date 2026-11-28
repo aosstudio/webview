@@ -1,0 +1,160 @@
+Allow Android geolocation to use the platform provider alone
+
+Preserve the default provider selection and JNI entry points. The
+standalone WebView pilot can omit the Play Services location library
+while using Android location and its existing permission checks.
+
+--- a/build/config/android/config.gni
++++ b/build/config/android/config.gni
+@@ -237,6 +237,9 @@
+   declare_args() {
+     android_ndk_api_level = default_min_sdk_version
+ 
++    # Compile the Google Play Services location provider into Android builds.
++    enable_google_play_services_location = true
++
+     if (current_cpu == "riscv64" && default_min_sdk_version < 37) {
+       # The Android NDK sysroot only provides RISC-V 64 libraries for API 37+.
+       android_ndk_api_level = 37
+--- a/services/BUILD.gn
++++ b/services/BUILD.gn
+@@ -197,7 +197,6 @@
+     enable_android_resources = false
+     sources = [
+       "device/generic_sensor/android/junit/src/org/chromium/device/sensors/PlatformSensorAndProviderTest.java",
+-      "device/geolocation/android/junit/src/org/chromium/device/geolocation/LocationProviderTest.java",
+       "device/nfc/android/junit/src/org/chromium/device/nfc/NFCTest.java",
+       "device/nfc/android/junit/src/org/chromium/device/nfc/NfcBlocklistTest.java",
+       "device/serial/android/javatests/src/org/chromium/device/serial/ChromeSerialManagerTest.java",
+@@ -206,7 +205,6 @@
+     deps = [
+       "$google_play_services_package:google_play_services_base_java",
+       "$google_play_services_package:google_play_services_basement_java",
+-      "$google_play_services_package:google_play_services_location_java",
+       "$google_play_services_package:google_play_services_tasks_java",
+       "$google_play_services_package:google_play_services_vision_common_java",
+       "$google_play_services_package:google_play_services_vision_java",
+@@ -233,6 +231,11 @@
+       "//third_party/google-truth:google_truth_java",
+     ]
+ 
++    if (enable_google_play_services_location) {
++      sources += [ "device/geolocation/android/junit/src/org/chromium/device/geolocation/LocationProviderTest.java" ]
++      deps += [ "$google_play_services_package:google_play_services_location_java" ]
++    }
++
+     # Enable tests for MLKit-based implementations for AICore.
+     if (use_mlkit_for_aicore) {
+       deps += [ "//services/on_device_model/android:junit" ]
+--- a/services/device/geolocation/BUILD.gn
++++ b/services/device/geolocation/BUILD.gn
+@@ -159,25 +159,31 @@
+       "android/java/src/org/chromium/device/geolocation/LocationProviderAdapter.java",
+       "android/java/src/org/chromium/device/geolocation/LocationProviderAndroid.java",
+       "android/java/src/org/chromium/device/geolocation/LocationProviderFactory.java",
+-      "android/java/src/org/chromium/device/geolocation/LocationProviderGmsCore.java",
+     ]
+ 
+     deps = [
+       ":geolocation_jni_headers",
+-      "$google_play_services_package:google_play_services_base_java",
+-      "$google_play_services_package:google_play_services_basement_java",
+-      "$google_play_services_package:google_play_services_location_java",
+-      "$google_play_services_package:google_play_services_tasks_java",
+       "//base:base_java",
+       "//build/android:build_java",
+       "//components/location/android:location_java",
+       "//components/permissions/android:core_java",
+       "//services/device/public/java:device_feature_list_java",
+       "//services/device/public/java:geolocation_java",
+-      "//third_party/android_deps:chromium_play_services_availability_java",
+       "//third_party/androidx:androidx_annotation_annotation_java",
+       "//third_party/jni_zero:jni_zero_java",
+     ]
++    if (enable_google_play_services_location) {
++      sources += [ "android/java/src/org/chromium/device/geolocation/LocationProviderGmsCore.java" ]
++      deps += [
++        "$google_play_services_package:google_play_services_base_java",
++        "$google_play_services_package:google_play_services_basement_java",
++        "$google_play_services_package:google_play_services_location_java",
++        "$google_play_services_package:google_play_services_tasks_java",
++        "//third_party/android_deps:chromium_play_services_availability_java",
++      ]
++    } else {
++      sources += [ "android/no_play_services/java/src/org/chromium/device/geolocation/LocationProviderGmsCore.java" ]
++    }
+   }
+ }
+ 
+--- a/services/device/geolocation/android/java/src/org/chromium/device/geolocation/LocationProviderFactory.java
++++ b/services/device/geolocation/android/java/src/org/chromium/device/geolocation/LocationProviderFactory.java
+@@ -62,22 +62,19 @@
+     public static LocationProvider create() {
+         if (sProviderImpl != null) return sProviderImpl;
+ 
+-        if (sUseGmsCoreLocationProvider
+-                && LocationProviderGmsCore.isGooglePlayServicesAvailable(
+-                        ContextUtils.getApplicationContext())) {
+-            sProviderImpl = new LocationProviderGmsCore(ContextUtils.getApplicationContext());
+-            RecordHistogram.recordEnumeratedHistogram(
+-                    "Geolocation.AndroidLocationProvider.ProviderType",
+-                    LocationProviderType.GMS_CORE,
+-                    LocationProviderType.COUNT);
+-
+-        } else {
++        if (sUseGmsCoreLocationProvider) {
++            sProviderImpl =
++                    LocationProviderGmsCore.createIfAvailable(ContextUtils.getApplicationContext());
++        }
++        @LocationProviderType int providerType = LocationProviderType.GMS_CORE;
++        if (sProviderImpl == null) {
+             sProviderImpl = new LocationProviderAndroid(ContextUtils.getApplicationContext());
+-            RecordHistogram.recordEnumeratedHistogram(
+-                    "Geolocation.AndroidLocationProvider.ProviderType",
+-                    LocationProviderType.ANDROID,
+-                    LocationProviderType.COUNT);
++            providerType = LocationProviderType.ANDROID;
+         }
++        RecordHistogram.recordEnumeratedHistogram(
++                "Geolocation.AndroidLocationProvider.ProviderType",
++                providerType,
++                LocationProviderType.COUNT);
+         return sProviderImpl;
+     }
+ 
+--- a/services/device/geolocation/android/java/src/org/chromium/device/geolocation/LocationProviderGmsCore.java
++++ b/services/device/geolocation/android/java/src/org/chromium/device/geolocation/LocationProviderGmsCore.java
+@@ -89,8 +89,9 @@
+         }
+     }
+ 
+-    public static boolean isGooglePlayServicesAvailable(Context context) {
+-        return ChromiumPlayServicesAvailability.isGooglePlayServicesAvailable(context);
++    static @Nullable LocationProvider createIfAvailable(Context context) {
++        if (!ChromiumPlayServicesAvailability.isGooglePlayServicesAvailable(context)) return null;
++        return new LocationProviderGmsCore(context);
+     }
+ 
+     LocationProviderGmsCore(Context context) {
+--- /dev/null
++++ b/services/device/geolocation/android/no_play_services/java/src/org/chromium/device/geolocation/LocationProviderGmsCore.java
+@@ -0,0 +1,19 @@
++// Copyright 2026 AOSStudio contributors
++// Use of this source code is governed by a BSD-style license that can be
++// found in the LICENSE file.
++
++package org.chromium.device.geolocation;
++
++import android.content.Context;
++
++import org.chromium.build.annotations.NullMarked;
++import org.chromium.build.annotations.Nullable;
++
++@NullMarked
++final class LocationProviderGmsCore {
++    private LocationProviderGmsCore() {}
++
++    static @Nullable LocationProvider createIfAvailable(Context context) {
++        return null;
++    }
++}
