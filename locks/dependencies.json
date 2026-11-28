@@ -962,6 +962,8 @@
     "node_modules/cssesc",
     "node_modules/debug",
     "node_modules/deep-is",
+    "node_modules/detect-libc",
+    "node_modules/dprint-node",
     "node_modules/emoji-regex",
     "node_modules/env-paths",
     "node_modules/error-ex",
