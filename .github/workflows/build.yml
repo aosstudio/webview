@@ -32,7 +32,6 @@ jobs:
     with:
       stage: plan
       release: ${{ needs.toolchain.outputs.release }}
-      toolchain: ${{ needs.toolchain.outputs.toolchain }}
 
   smoke:
     needs: [toolchain, plan]
@@ -43,8 +42,6 @@ jobs:
     with:
       stage: smoke
       release: ${{ needs.toolchain.outputs.release }}
-      toolchain: ${{ needs.toolchain.outputs.toolchain }}
-      plan: ${{ needs.plan.outputs.plan }}
       matrices: ${{ needs.plan.outputs.matrices }}
 
   prepare-base:
@@ -56,8 +53,6 @@ jobs:
     with:
       stage: prepare-base
       release: ${{ needs.toolchain.outputs.release }}
-      toolchain: ${{ needs.toolchain.outputs.toolchain }}
-      plan: ${{ needs.plan.outputs.plan }}
       matrices: ${{ needs.plan.outputs.matrices }}
 
   prepare-compile:
@@ -73,8 +68,6 @@ jobs:
     with:
       stage: ${{ matrix.stage }}
       release: ${{ needs.toolchain.outputs.release }}
-      toolchain: ${{ needs.toolchain.outputs.toolchain }}
-      plan: ${{ needs.plan.outputs.plan }}
       matrices: ${{ needs.plan.outputs.matrices }}
 
   prepare-finish:
@@ -86,8 +79,6 @@ jobs:
     with:
       stage: prepare-finish
       release: ${{ needs.toolchain.outputs.release }}
-      toolchain: ${{ needs.toolchain.outputs.toolchain }}
-      plan: ${{ needs.plan.outputs.plan }}
       matrices: ${{ needs.plan.outputs.matrices }}
 
   native:
@@ -103,8 +94,6 @@ jobs:
     with:
       stage: ${{ matrix.stage }}
       release: ${{ needs.toolchain.outputs.release }}
-      toolchain: ${{ needs.toolchain.outputs.toolchain }}
-      plan: ${{ needs.plan.outputs.plan }}
       matrices: ${{ needs.plan.outputs.matrices }}
 
   java:
@@ -116,8 +105,6 @@ jobs:
     with:
       stage: java
       release: ${{ needs.toolchain.outputs.release }}
-      toolchain: ${{ needs.toolchain.outputs.toolchain }}
-      plan: ${{ needs.plan.outputs.plan }}
       matrices: ${{ needs.plan.outputs.matrices }}
 
   link:
@@ -129,8 +116,6 @@ jobs:
     with:
       stage: link
       release: ${{ needs.toolchain.outputs.release }}
-      toolchain: ${{ needs.toolchain.outputs.toolchain }}
-      plan: ${{ needs.plan.outputs.plan }}
       matrices: ${{ needs.plan.outputs.matrices }}
 
   apk:
@@ -142,6 +127,4 @@ jobs:
     with:
       stage: apk
       release: ${{ needs.toolchain.outputs.release }}
-      toolchain: ${{ needs.toolchain.outputs.toolchain }}
-      plan: ${{ needs.plan.outputs.plan }}
       matrices: ${{ needs.plan.outputs.matrices }}

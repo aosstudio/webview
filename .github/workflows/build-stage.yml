@@ -8,19 +8,11 @@ on:
         type: string
       release:
         type: string
-      toolchain:
-        type: string
-      plan:
-        type: string
       matrices:
         type: string
     outputs:
       release:
         value: ${{ jobs.stage.outputs.release }}
-      toolchain:
-        value: ${{ jobs.stage.outputs.toolchain }}
-      plan:
-        value: ${{ jobs.stage.outputs.plan }}
       matrices:
         value: ${{ jobs.stage.outputs.matrices }}
 
@@ -31,14 +23,10 @@ jobs:
     runs-on: ubuntu-26.04
     outputs:
       release: ${{ steps.lookup.outputs.release }}
-      toolchain: ${{ steps.lookup.outputs.toolchain }}
-      plan: ${{ steps.lookup.outputs.plan }}
       matrices: ${{ steps.matrices.outputs.matrices }}
     env:
       STAGE: ${{ inputs.stage }}
       CACHE_RELEASE: ${{ inputs.release }}
-      CACHE_TOOLCHAIN: ${{ inputs.toolchain }}
-      CACHE_PLAN: ${{ inputs.plan }}
       BUILD_MATRICES: ${{ inputs.matrices }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1

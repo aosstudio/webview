@@ -1,9 +1,7 @@
 import argparse
-from hashlib import sha256
 import json
 import os
 from pathlib import Path
-from platform import python_version
 import re
 import subprocess
 import sys
@@ -12,8 +10,7 @@ from typing import TypedDict
 
 from intake import bootstrap, extract_tar, fetch, setup
 from plan import ROOT, SMOKE, Stage
-from release_cache import Asset, Receipt, ReleaseCache, checksum
-from ts_proto import install_ts_proto
+from release_cache import Asset, Receipt, ReleaseCache
 
 
 OUT = ROOT / "out"
@@ -41,83 +38,6 @@ class Matrices(TypedDict):
     native: list[str]
 
 
-def stable_hash(payload: object) -> str:
-    return sha256(
-        json.dumps(payload, sort_keys=True, separators=(",", ":")).encode()
-    ).hexdigest()
-
-
-def identity(receipt: Receipt) -> tuple[int, str]:
-    return receipt["id"], receipt["digest"]
-
-
-def host_platform() -> list[str]:
-    return [os.environ[name] for name in ("RUNNER_OS", "RUNNER_ARCH", "ImageOS")]
-
-
-def toolchain_name() -> str:
-    inputs = json.loads((ROOT / "locks/inputs.json").read_text(encoding="utf-8"))
-    fingerprint = stable_hash(
-        {
-            "host": host_platform(),
-            "inputs": {name: inputs[name] for name in ("llvm", "gn", "ndk")},
-            "bootstrap": checksum(ROOT / "scripts/bootstrap.sh"),
-            "intake": checksum(ROOT / "scripts/intake.py"),
-        }
-    )
-    return f"toolchain-{fingerprint}.tar.zst"
-
-
-def plan_name(toolchain: Receipt) -> str:
-    inputs = [
-        "locks/inputs.json",
-        "locks/dependencies.json",
-        *(
-            path.relative_to(ROOT).as_posix()
-            for path in sorted((ROOT / "config").rglob("*"))
-            if path.is_file()
-        ),
-        "ci/compile-weights.json",
-        "scripts/build.sh",
-        "scripts/intake.py",
-        "scripts/plan.py",
-        "patches/series",
-        *(
-            f"patches/{name}"
-            for name in (ROOT / "patches/series")
-            .read_text(encoding="utf-8")
-            .splitlines()
-        ),
-    ]
-    fingerprint = stable_hash(
-        {
-            "format": 1,
-            "toolchain": identity(toolchain),
-            "host": host_platform(),
-            "python": python_version(),
-            "recipe": {path: checksum(ROOT / path) for path in inputs},
-        }
-    )
-    return f"plan-{fingerprint}.json"
-
-
-def needs_ts_proto(stage: Stage) -> bool:
-    return any(path.startswith("gen/tsproto/") for path in stage["outputs"])
-
-
-def stage_name(
-    stage: str, plan: Receipt, parents: dict[str, Receipt], definition: Stage
-) -> str:
-    recipe: dict[str, object] = {
-        "plan": identity(plan),
-        "parents": {name: identity(receipt) for name, receipt in parents.items()},
-        "packaging": checksum(ROOT / "scripts/package.sh") if stage == "apk" else "",
-    }
-    if needs_ts_proto(definition):
-        recipe["ts-proto"] = checksum(ROOT / "scripts/ts_proto.py")
-    return f"{stage}-{stable_hash(recipe)}.tar.zst"
-
-
 def job_output(name: str, value: str) -> None:
     with Path(os.environ["GITHUB_OUTPUT"]).open("a", encoding="utf-8") as output:
         print(f"{name}={value}", file=output)
@@ -136,39 +56,30 @@ def emit_matrices() -> None:
 
 def lookup(cache: ReleaseCache, stage: str) -> None:
     upstream: dict[str, Receipt] = {}
+    name = "plan.json" if stage == "plan" else f"{stage}.tar.zst"
     if stage == "toolchain":
-        name = toolchain_name()
         release = cache.ensure()
         hit = cache.lookup(release, name)
         job_output("release", str(release))
-        job_output("toolchain", name)
     else:
         release = int(os.environ["CACHE_RELEASE"])
         assets: dict[str, Asset] = cache.assets(release)
-        toolchain = cache.lookup(release, os.environ["CACHE_TOOLCHAIN"], assets=assets)
-        if toolchain is None:
-            raise ValueError("Missing build toolchain in the branch's draft Release")
-        if stage == "plan":
-            name = plan_name(toolchain)
-            hit = cache.lookup(release, name, assets=assets)
-            if hit is not None:
-                cache.fetch(hit, STATE / "plan.json")
-            job_output("plan", name)
-        else:
-            plan_key = os.environ["CACHE_PLAN"]
-            plan = cache.lookup(release, plan_key, assets=assets)
-            if plan is None:
-                raise ValueError("The plan was removed during the build")
-            cache.fetch(plan, STATE / "plan.json")
-            name = lookup_stage(cache, release, assets, stage, plan, upstream)
-            hit = cache.lookup(release, name, assets=assets)
-            if hit is None:
-                if plan_name(toolchain) != plan_key:
-                    raise ValueError(
-                        "Runner or checkout inputs differ from the plan job"
-                    )
+        hit = cache.lookup(release, name, assets=assets)
         if hit is None:
+            toolchain = cache.lookup(release, "toolchain.tar.zst", assets=assets)
+            if toolchain is None:
+                raise ValueError(
+                    "Missing build toolchain in the branch's draft Release"
+                )
+            if stage != "plan":
+                plan = cache.lookup(release, "plan.json", assets=assets)
+                if plan is None:
+                    raise ValueError("The plan was removed during the build")
+                cache.fetch(plan, STATE / "plan.json")
+                upstream = lookup_prerequisites(cache, release, assets, stage)
             cache.fetch(toolchain, STATE / "toolchain.tar.zst")
+        elif stage == "plan":
+            cache.fetch(hit, STATE / "plan.json")
 
     job = Job(name=name, release=release, hit=hit, upstream=upstream)
     (STATE / "job.json").write_text(json.dumps(job), encoding="utf-8")
@@ -176,15 +87,9 @@ def lookup(cache: ReleaseCache, stage: str) -> None:
     print(f"{'Reuse' if hit else 'Build'} {name} in draft {release}")
 
 
-def lookup_stage(
-    cache: ReleaseCache,
-    release: int,
-    assets: dict[str, Asset],
-    stage: str,
-    plan: Receipt,
-    upstream: dict[str, Receipt],
-) -> str:
-    stages = load_plan()
+def lookup_prerequisites(
+    cache: ReleaseCache, release: int, assets: dict[str, Asset], stage: str
+) -> dict[str, Receipt]:
     matrices: Matrices = json.loads(os.environ["BUILD_MATRICES"])
     parents: dict[str, list[str]] = {
         "smoke": [],
@@ -197,19 +102,19 @@ def lookup_stage(
         "apk": ["link", "java"],
     }
 
-    def dependencies(job: str) -> dict[str, Receipt]:
-        direct: dict[str, Receipt] = {}
+    upstream: dict[str, Receipt] = {}
+
+    def dependencies(job: str) -> None:
         for parent in parents[job]:
             if parent not in upstream:
-                name = stage_name(parent, plan, dependencies(parent), stages[parent])
-                receipt = cache.lookup(release, name, assets=assets)
+                dependencies(parent)
+                receipt = cache.lookup(release, f"{parent}.tar.zst", assets=assets)
                 if receipt is None:
                     raise ValueError(f"Missing upstream handoff for {parent}")
                 upstream[parent] = receipt
-            direct[parent] = upstream[parent]
-        return direct
 
-    return stage_name(stage, plan, dependencies(stage), stages[stage])
+    dependencies(stage)
+    return upstream
 
 
 def load_job() -> Job:
@@ -463,13 +368,15 @@ def main() -> None:
                 toolchain = STATE / "toolchain.tar.zst"
                 extract_tar(toolchain, INPUTS)
                 toolchain.unlink()
-            setup(INPUTS, ARCHIVES, verify_only)
-            if (
+            with_ts_proto = (
                 not verify_only
                 and args.stage != "plan"
-                and needs_ts_proto(load_plan()[args.stage])
-            ):
-                install_ts_proto(INPUTS / "chromium", ARCHIVES)
+                and any(
+                    path.startswith("gen/tsproto/")
+                    for path in load_plan()[args.stage]["outputs"]
+                )
+            )
+            setup(INPUTS, ARCHIVES, verify_only, with_ts_proto=with_ts_proto)
         case "configure":
             subprocess.run(
                 ["bash", ROOT / "scripts/build.sh", "configure"],
