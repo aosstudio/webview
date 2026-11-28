@@ -11,11 +11,7 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  check:
-    uses: ./.github/workflows/ci.yml
-
   toolchain:
-    needs: check
     if: github.ref_type == 'branch'
     permissions:
       contents: write
