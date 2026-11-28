@@ -6,7 +6,7 @@ Build on GitHub-hosted Linux. The local and hosted paths should use the same sta
 
 Select **Build WebView** in GitHub Actions and choose the branch to build. The toolchain job builds the locked GN and Clang sources and shares its output through the branch's draft Release. On a cache miss, each build runner prepares the source tree and SDK from the repository locks before running GN. The hosted and local paths share the [input preparation script](../scripts/intake.py).
 
-The plan job fills the private GHCR Chromium source cache when the locked Chromium commit has no cached archive, including when the build plan itself is reused. Subsequent jobs download the original archive from the same package across branches and verify it against the input lock before extraction. Each runner applies the patches from its own checkout.
+The plan job fills two private GHCR caches on a miss, including when the build plan itself is reused. The Chromium source cache is tagged by Chromium commit. The build-input cache bundles the other original downloads under a tag derived from their locks and the Chromium commit, which supplies the npm lock. Both caches are shared across branches. Jobs that need to build pull them by OCI digest and verify each input against its lock before extraction. Each runner applies the patches from its own checkout.
 
 Find the candidate APK and its license material in `apk.tar.zst` in the branch's draft Release. APK verification runs after the upload and also runs when an APK is reused.
 

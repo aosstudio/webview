@@ -1,10 +1,12 @@
 import argparse
+from hashlib import sha256
 import json
 import os
 from pathlib import Path
 import re
 import subprocess
 import sys
+import tarfile
 from tempfile import TemporaryDirectory
 from typing import TypedDict
 
@@ -122,7 +124,7 @@ def load_job() -> Job:
     return job
 
 
-def chromium_cache_digest(reference: str, auth: list[str], token: str) -> str | None:
+def registry_digest(reference: str, auth: list[str], token: str) -> str | None:
     result = subprocess.run(
         ["oras", "manifest", "fetch", "--descriptor", *auth, reference],
         input=token,
@@ -140,24 +142,65 @@ def chromium_cache_digest(reference: str, auth: list[str], token: str) -> str | 
     return digest
 
 
-def cache_chromium(stage: str) -> None:
-    source = json.loads((ROOT / "locks/inputs.json").read_text(encoding="utf-8"))[
-        "chromium"
-    ]
+def push_cache(
+    reference: str,
+    archive: Path,
+    artifact_type: str,
+    layer_type: str,
+    auth: list[str],
+    token: str,
+) -> None:
+    if registry_digest(reference, auth, token) is not None:
+        print(f"Reuse {reference} published by another job", flush=True)
+        return
+    print(f"Publish {reference}", flush=True)
+    subprocess.run(
+        [
+            "oras",
+            "push",
+            *auth,
+            "--artifact-type",
+            artifact_type,
+            "--annotation",
+            f"org.opencontainers.image.source=https://github.com/{os.environ['GITHUB_REPOSITORY']}",
+            reference,
+            f"{archive.name}:{layer_type}",
+        ],
+        input=token,
+        text=True,
+        cwd=archive.parent,
+        check=True,
+    )
+
+
+def pull_cache(reference: str, output: Path, auth: list[str], token: str) -> None:
+    print(f"Reuse {reference}", flush=True)
+    subprocess.run(
+        ["oras", "pull", *auth, "--output", output, reference],
+        input=token,
+        text=True,
+        check=True,
+    )
+
+
+def cache_chromium(
+    stage: str,
+    package: str,
+    source: dict[str, str],
+    auth: list[str],
+    token: str,
+    *,
+    needed: bool,
+) -> None:
     revision = source["commit"]
     if not re.fullmatch(r"[0-9a-f]{40}", revision):
         raise ValueError(f"Invalid Chromium commit {revision}")
-    repo = os.environ["GITHUB_REPOSITORY"]
-    package = f"ghcr.io/{repo.lower()}-chromium-source"
     reference = f"{package}:{revision}"
-    auth = ["--username", os.environ["GITHUB_ACTOR"], "--password-stdin"]
-    token = os.environ["GHCR_TOKEN"] + "\n"
-    digest = chromium_cache_digest(reference, auth, token)
+    digest = registry_digest(reference, auth, token)
     if digest is None and stage != "plan":
         raise ValueError(f"Missing {reference}; the plan job fills the source cache")
 
     filename = "chromium.tar.gz"
-    ARCHIVES.mkdir(parents=True, exist_ok=True)
     if digest is None:
         print(f"Fetch Chromium {revision} from Gitiles", flush=True)
         archive = fetch(
@@ -166,43 +209,113 @@ def cache_chromium(stage: str) -> None:
             source["sha256"],
             tree_digest=source["tree_sha256"],
         )
-        # Another branch can publish the same snapshot during the upstream fetch.
-        if chromium_cache_digest(reference, auth, token) is not None:
-            print(f"Reuse {reference} published by another job", flush=True)
-            return
         with TemporaryDirectory(dir=ARCHIVES) as directory:
-            (Path(directory) / filename).hardlink_to(archive)
-            print(f"Publish {reference}", flush=True)
-            subprocess.run(
-                [
-                    "oras",
-                    "push",
-                    *auth,
-                    "--artifact-type",
-                    "application/vnd.aosstudio.chromium.source.v1",
-                    "--annotation",
-                    f"org.opencontainers.image.source=https://github.com/{repo}",
-                    reference,
-                    f"{filename}:application/gzip",
-                ],
-                input=token,
-                text=True,
-                cwd=directory,
-                check=True,
+            artifact = Path(directory) / filename
+            artifact.hardlink_to(archive)
+            push_cache(
+                reference,
+                artifact,
+                "application/vnd.aosstudio.chromium.source.v1",
+                "application/gzip",
+                auth,
+                token,
             )
-        return
-
-    print(f"Reuse {reference}@{digest}", flush=True)
-    if load_job()["hit"] is None:
+    elif needed:
         with TemporaryDirectory(dir=ARCHIVES) as directory:
-            subprocess.run(
-                ["oras", "pull", *auth, "--output", directory, f"{package}@{digest}"],
-                input=token,
-                text=True,
-                check=True,
-            )
-            # The input staging code checks the locked archive or tree digest.
+            pull_cache(f"{package}@{digest}", Path(directory), auth, token)
             (Path(directory) / filename).replace(ARCHIVES / source["sha256"])
+    else:
+        print(f"Reuse {reference}@{digest}", flush=True)
+
+
+def restore_input_archives(archive: Path, chromium_digest: str) -> None:
+    with tarfile.open(archive, "r:") as bundle:
+        members = bundle.getmembers()
+        names = {member.name for member in members}
+        if (
+            not members
+            or len(members) != len(names)
+            or chromium_digest in names
+            or any(
+                not member.isfile()
+                or not re.fullmatch(r"[0-9a-f]{40,128}", member.name)
+                for member in members
+            )
+        ):
+            raise ValueError("Invalid WebView input archive cache")
+        bundle.extractall(ARCHIVES, members=members, filter="data")
+
+
+def setup_cached_inputs(stage: str) -> None:
+    lock: dict[str, dict[str, str]] = json.loads(
+        (ROOT / "locks/inputs.json").read_text(encoding="utf-8")
+    )
+    chromium = lock["chromium"]
+    inputs = {
+        "chromium": chromium["commit"],
+        "dependencies": json.loads(
+            (ROOT / "locks/dependencies.json").read_text(encoding="utf-8")
+        ),
+        **{name: lock[name] for name in ("jdk", "sdk", "ndk", "system_stubs")},
+    }
+    tag = sha256(
+        json.dumps(inputs, sort_keys=True, separators=(",", ":")).encode()
+    ).hexdigest()
+    registry = f"ghcr.io/{os.environ['GITHUB_REPOSITORY'].lower()}"
+    package = f"{registry}-build-inputs"
+    reference = f"{package}:{tag}"
+    auth = ["--username", os.environ["GITHUB_ACTOR"], "--password-stdin"]
+    token = os.environ["GHCR_TOKEN"] + "\n"
+    digest = registry_digest(reference, auth, token)
+    if digest is None and stage != "plan":
+        raise ValueError(
+            f"Missing {reference}; the plan job fills the input archive cache"
+        )
+
+    needs_build = load_job()["hit"] is None
+    ARCHIVES.mkdir(parents=True, exist_ok=True)
+    cache_chromium(
+        stage,
+        f"{registry}-chromium-source",
+        chromium,
+        auth,
+        token,
+        needed=needs_build or digest is None,
+    )
+    if digest is None:
+        with TemporaryDirectory(dir=ARCHIVES) as directory:
+            work = Path(directory)
+            seed = work / "archives"
+            seed.mkdir()
+            chromium_archive = ARCHIVES / chromium["sha256"]
+            (seed / chromium_archive.name).hardlink_to(chromium_archive)
+            setup(INPUTS, seed)
+            archive = work / "build-inputs.tar"
+            with tarfile.open(archive, "w") as bundle:
+                for path in sorted(seed.iterdir()):
+                    if path.name == chromium_archive.name:
+                        continue
+                    entry = tarfile.TarInfo(path.name)
+                    with path.open("rb") as stream:
+                        entry.size = path.stat().st_size
+                        bundle.addfile(entry, stream)
+            push_cache(
+                reference,
+                archive,
+                "application/vnd.aosstudio.webview.build-inputs.v1",
+                "application/vnd.oci.image.layer.v1.tar",
+                auth,
+                token,
+            )
+    elif needs_build:
+        with TemporaryDirectory(dir=ARCHIVES) as directory:
+            work = Path(directory)
+            pull_cache(f"{package}@{digest}", work, auth, token)
+            restore_input_archives(work / "build-inputs.tar", chromium["sha256"])
+        # Intake verifies each restored file by its pinned archive or tree digest.
+        setup(INPUTS, ARCHIVES)
+    else:
+        print(f"Reuse {reference}@{digest}", flush=True)
 
 
 def load_plan() -> dict[str, Stage]:
@@ -331,7 +444,6 @@ def main() -> None:
         "action",
         choices=(
             "lookup",
-            "chromium-cache",
             "setup",
             "verify-setup",
             "configure",
@@ -360,15 +472,14 @@ def main() -> None:
                     "plan.json" if args.stage == "plan" else "result.tar.zst"
                 )
                 cache.store(job["release"], job["name"], path)
-        case "chromium-cache":
-            cache_chromium(args.stage)
-        case "setup" | "verify-setup":
-            verify_only = args.action == "verify-setup"
-            if not verify_only:
+        case "setup":
+            if load_job()["hit"] is None:
                 toolchain = STATE / "toolchain.tar.zst"
                 extract_tar(toolchain, INPUTS)
                 toolchain.unlink()
-            setup(INPUTS, ARCHIVES, verify_only)
+            setup_cached_inputs(args.stage)
+        case "verify-setup":
+            setup(INPUTS, ARCHIVES, verify_only=True)
         case "configure":
             subprocess.run(
                 ["bash", ROOT / "scripts/build.sh", "configure"],
