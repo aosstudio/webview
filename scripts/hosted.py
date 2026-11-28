@@ -368,15 +368,7 @@ def main() -> None:
                 toolchain = STATE / "toolchain.tar.zst"
                 extract_tar(toolchain, INPUTS)
                 toolchain.unlink()
-            with_ts_proto = (
-                not verify_only
-                and args.stage != "plan"
-                and any(
-                    path.startswith("gen/tsproto/")
-                    for path in load_plan()[args.stage]["outputs"]
-                )
-            )
-            setup(INPUTS, ARCHIVES, verify_only, with_ts_proto=with_ts_proto)
+            setup(INPUTS, ARCHIVES, verify_only)
         case "configure":
             subprocess.run(
                 ["bash", ROOT / "scripts/build.sh", "configure"],

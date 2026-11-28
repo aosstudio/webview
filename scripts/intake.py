@@ -296,9 +296,7 @@ def stage_source_metadata(source: Path, revision: dict[str, str]) -> None:
     )
 
 
-def setup(
-    output: Path, cache: Path, verify_only: bool = False, *, with_ts_proto: bool = True
-) -> None:
+def setup(output: Path, cache: Path, verify_only: bool = False) -> None:
     lock: dict[str, dict[str, str]] = json.loads(
         (ROOT / "locks/inputs.json").read_text(encoding="utf-8")
     )
@@ -321,10 +319,7 @@ def setup(
     )
     stage_archives(output, cache, recipes)
     source = output / "chromium"
-    node_packages = dependencies["node_packages"]
-    if with_ts_proto:
-        node_packages += ["node_modules/detect-libc", "node_modules/dprint-node"]
-    stage_node(source, cache, node_packages)
+    stage_node(source, cache, dependencies["node_packages"])
     launcher = output / "jdk/bin/java"
     launcher.rename(launcher.with_suffix(".chromium"))
     launcher.write_text(

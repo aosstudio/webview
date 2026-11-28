@@ -8,8 +8,6 @@ Select **Build WebView** in GitHub Actions and choose the branch to build. The t
 
 The plan job fills the private GHCR Chromium source cache when the locked Chromium commit has no cached archive, including when the build plan itself is reused. Subsequent jobs download the original archive from the same package across branches and verify it against the input lock before extraction. Each runner applies the patches from its own checkout.
 
-Stages that generate TypeScript protobuf files get the locked ts-proto formatter dependencies during setup.
-
 Find the candidate APK and its license material in `apk.tar.zst` in the branch's draft Release. APK verification runs after the upload and also runs when an APK is reused.
 
 ## Stage boundaries
