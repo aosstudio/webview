@@ -13,6 +13,7 @@ from typing import TypedDict
 from intake import bootstrap, extract_tar, fetch, setup
 from plan import ROOT, SMOKE, Stage
 from release_cache import Asset, Receipt, ReleaseCache, checksum
+from ts_proto import install_ts_proto
 
 
 OUT = ROOT / "out"
@@ -100,17 +101,21 @@ def plan_name(toolchain: Receipt) -> str:
     return f"plan-{fingerprint}.json"
 
 
-def stage_name(stage: str, plan: Receipt, parents: dict[str, Receipt]) -> str:
-    fingerprint = stable_hash(
-        {
-            "plan": identity(plan),
-            "parents": {name: identity(receipt) for name, receipt in parents.items()},
-            "packaging": checksum(ROOT / "scripts/package.sh")
-            if stage == "apk"
-            else "",
-        }
-    )
-    return f"{stage}-{fingerprint}.tar.zst"
+def needs_ts_proto(stage: Stage) -> bool:
+    return any(path.startswith("gen/tsproto/") for path in stage["outputs"])
+
+
+def stage_name(
+    stage: str, plan: Receipt, parents: dict[str, Receipt], definition: Stage
+) -> str:
+    recipe: dict[str, object] = {
+        "plan": identity(plan),
+        "parents": {name: identity(receipt) for name, receipt in parents.items()},
+        "packaging": checksum(ROOT / "scripts/package.sh") if stage == "apk" else "",
+    }
+    if needs_ts_proto(definition):
+        recipe["ts-proto"] = checksum(ROOT / "scripts/ts_proto.py")
+    return f"{stage}-{stable_hash(recipe)}.tar.zst"
 
 
 def job_output(name: str, value: str) -> None:
@@ -154,6 +159,7 @@ def lookup(cache: ReleaseCache, stage: str) -> None:
             plan = cache.lookup(release, plan_key, assets=assets)
             if plan is None:
                 raise ValueError("The plan was removed during the build")
+            cache.fetch(plan, STATE / "plan.json")
             name = lookup_stage(cache, release, assets, stage, plan, upstream)
             hit = cache.lookup(release, name, assets=assets)
             if hit is None:
@@ -161,7 +167,6 @@ def lookup(cache: ReleaseCache, stage: str) -> None:
                     raise ValueError(
                         "Runner or checkout inputs differ from the plan job"
                     )
-                cache.fetch(plan, STATE / "plan.json")
         if hit is None:
             cache.fetch(toolchain, STATE / "toolchain.tar.zst")
 
@@ -179,6 +184,7 @@ def lookup_stage(
     plan: Receipt,
     upstream: dict[str, Receipt],
 ) -> str:
+    stages = load_plan()
     matrices: Matrices = json.loads(os.environ["BUILD_MATRICES"])
     parents: dict[str, list[str]] = {
         "smoke": [],
@@ -195,7 +201,7 @@ def lookup_stage(
         direct: dict[str, Receipt] = {}
         for parent in parents[job]:
             if parent not in upstream:
-                name = stage_name(parent, plan, dependencies(parent))
+                name = stage_name(parent, plan, dependencies(parent), stages[parent])
                 receipt = cache.lookup(release, name, assets=assets)
                 if receipt is None:
                     raise ValueError(f"Missing upstream handoff for {parent}")
@@ -203,7 +209,7 @@ def lookup_stage(
             direct[parent] = upstream[parent]
         return direct
 
-    return stage_name(stage, plan, dependencies(stage))
+    return stage_name(stage, plan, dependencies(stage), stages[stage])
 
 
 def load_job() -> Job:
@@ -458,6 +464,12 @@ def main() -> None:
                 extract_tar(toolchain, INPUTS)
                 toolchain.unlink()
             setup(INPUTS, ARCHIVES, verify_only)
+            if (
+                not verify_only
+                and args.stage != "plan"
+                and needs_ts_proto(load_plan()[args.stage])
+            ):
+                install_ts_proto(INPUTS / "chromium", ARCHIVES)
         case "configure":
             subprocess.run(
                 ["bash", ROOT / "scripts/build.sh", "configure"],

@@ -12,6 +12,7 @@ check:
 	$(PYTHON) scripts/verify.py
 
 build:
+	$(PYTHON) scripts/ts_proto.py "$${CHROMIUM_SRC:?Set CHROMIUM_SRC to the prepared Chromium tree}" out/archives
 	JOBS="$(JOBS)" PYTHON="$(PYTHON)" bash scripts/build.sh
 
 verify:
