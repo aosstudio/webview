@@ -327,15 +327,16 @@ def load_plan() -> dict[str, Stage]:
 
 def restore(cache: ReleaseCache, stage: str) -> None:
     job = load_job()
-    archive = STATE / "handoff.tar.zst"
-    restored: list[str] = []
     if hit := job["hit"]:
         if stage != "apk":
             raise ValueError("Only APK verification restores a cached job's own output")
+        archive = STATE / "result.tar.zst"
         cache.fetch(hit, archive)
         extract_tar(archive, BUILD)
-        archive.unlink()
         return
+
+    archive = STATE / "handoff.tar.zst"
+    restored: list[str] = []
     stages = load_plan()
     for name, receipt in job["upstream"].items():
         cache.fetch(receipt, archive)

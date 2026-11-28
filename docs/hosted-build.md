@@ -10,6 +10,8 @@ The plan job fills two private GHCR caches on a miss, including when the build p
 
 Find the candidate APK and its license material in `apk.tar.zst` in the branch's draft Release. APK verification runs after the upload and also runs when an APK is reused.
 
+After APK verification succeeds on `main`, the build publishes `aosstudio-webview-x86_64.tar.zst` to the `latest` Nightly prerelease. The archive contains the APK, NOTICE, SPDX inventory and recorded build inputs.
+
 ## Stage boundaries
 
 The local Chromium 156.0.8078.93 build for Android API 37.0 x86_64 recorded 45,723 Ninja actions for `apks/SystemWebView64.apk`. Action times below are summed across parallel work and describe the local build. GitHub job durations remain to be measured.
@@ -47,7 +49,7 @@ The final link invocation took 53.5 seconds locally. Its full input inventory sp
 
 ## Reuse between commits
 
-Store reusable build output in one draft GitHub Release per branch. The branch's full ref determines the draft tag. Assets have fixed stage names such as `plan.json`, `prepare-finish.tar.zst`, and `native-07.tar.zst`. Each upload records the source commit and run URL in its label. Keep this release in draft and publish verified APKs through the regular release workflow. [GitHub Releases API](https://docs.github.com/en/rest/releases/releases)
+Store reusable build output in one draft GitHub Release per branch. The branch's full ref determines the draft tag. Assets have fixed stage names such as `plan.json`, `prepare-finish.tar.zst`, and `native-07.tar.zst`. Each upload records the source commit and run URL in its label. [GitHub Releases API](https://docs.github.com/en/rest/releases/releases)
 
 Each job reuses its complete asset if present and builds it on a miss. Before extracting a prerequisite, the job verifies the asset against GitHub's published digest. Each file must be smaller than 2 GiB. Larger handoffs use upload-specific part names and a fixed-name manifest, such as `link.tar.zst.json`, uploaded last. [Release asset API](https://docs.github.com/en/rest/releases/assets) · [Release size limits](https://docs.github.com/en/repositories/releasing-projects-on-github/about-releases#storage-and-bandwidth-quotas)
 

@@ -111,3 +111,34 @@ jobs:
       - name: Verify the APK candidate
         if: inputs.stage == 'apk'
         run: python scripts/hosted.py verify "$STAGE"
+
+      - name: Publish nightly release
+        if: inputs.stage == 'apk' && github.ref == 'refs/heads/main'
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          asset=out/hosted/aosstudio-webview-x86_64.tar.zst
+          test -s out/hosted/result.tar.zst
+          mv -- out/hosted/result.tar.zst "$asset"
+
+          tag=latest
+          ref=$(gh api "repos/$GH_REPO/git/matching-refs/tags/$tag" \
+            --jq '.[] | select(.ref == "refs/tags/latest") | .ref')
+          if [[ -n "$ref" ]]; then
+            gh api --silent --method PATCH "repos/$GH_REPO/git/refs/tags/$tag" \
+              -f "sha=$GITHUB_SHA" -F force=true
+          else
+            gh api --silent --method POST "repos/$GH_REPO/git/refs" \
+              -f "ref=refs/tags/$tag" -f "sha=$GITHUB_SHA"
+          fi
+
+          if gh release view "$tag" > /dev/null 2>&1; then
+            gh release upload "$tag" "$asset" --clobber
+            gh release edit "$tag" --draft=false --prerelease --latest=false \
+              --title 'Nightly build' --notes ''
+          else
+            gh release create "$tag" "$asset" --verify-tag --prerelease --latest=false \
+              --title 'Nightly build' --notes ''
+          fi
